@@ -1,14 +1,8 @@
 services:
   - type: web
     name: qualisense
-    runtime: python
+    env: python
     plan: free
-
-    buildCommand: "pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput"
-
-    startCommand: gunicorn qualisense_project.wsgi:application
-
-    disk:
-      name: qualisense_disk
-      mountPath: /opt/render/project/src/disk
-      sizeGB: 1
+    # This command creates the 'staticfiles' directory
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
+    startCommand: "gunicorn qualisense_project.wsgi:application"
