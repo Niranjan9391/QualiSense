@@ -1,0 +1,17 @@
+/* GLOBAL RESET & BODY */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+    overflow-y: scroll;
+    background:#F2F4F7 !important;
+    font-family: Inter, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+    color:#1E2A47;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+}
+body::-webkit-scrollbar { width:0; background:transparent; }
+
+/* PAGE TITLES & CARDS */
+.page-title { font-size:32px; font-weight:800; color:#1E2A47; }
+.card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 8px 28px rgba(16,24,40,0.06); transition:0.25s; }
+.card:hover { transform:translateY(-4px); box-shadow:0 14px 40px rgba(16,24,40,0.08); }

@@ -1,0 +1,16 @@
+.table-responsive { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.table { border-collapse:separate; border-spacing:0; width:100%; }
+.table thead th {
+    background:linear-gradient(90deg,#1e2a47,#2c3e70);
+    color:#fff; font-weight:700; border-color:transparent;
+    white-space:nowrap; padding:12px 14px;
+}
+.table tbody td {
+    background:#fff; color:#16324b; padding:12px 14px;
+    border-top:1px solid rgba(0,0,0,0.06); white-space:nowrap;
+}
+.table-responsive thead th { position:sticky; top:0; z-index:5; }
+
+@media (max-width:768px) {
+    .table th, .table td { white-space:normal; font-size:14px; padding:10px; }
+}
