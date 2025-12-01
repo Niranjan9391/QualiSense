@@ -1,0 +1,467 @@
+{% extends "quali_defect_app/base.html" %}
+{% load static %}
+{% load dict_extras %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/data_input.css' %}">
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/results.css' %}">
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/tables.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- LOGIN POPUP -->
+<div class="modal fade" id="loginPopup" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4">
+      <h4 class="text-center fw-bold mb-2">Login Required</h4>
+      <p class="text-center text-muted mb-4">Please login or create an account to use our AI Models.</p>
+      <div class="d-flex justify-content-around mb-3">
+        <a href="{% url 'login' %}?next={% url 'data_input' %}" class="btn btn-primary px-4">Login</a>
+        <a href="{% url 'signup' %}?next={% url 'data_input' %}" class="btn btn-outline-primary px-4">Sign Up</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <h2 class="page-title text-center mb-4">Our Model</h2>
+
+  <!-- INTRO SECTION: visible until user clicks START (localStorage controlled) -->
+  <section id="introSection" class="data-input-card mb-5 animate-fade">
+    <div class="row align-items-center gx-5">
+      <div class="col-lg-6 mb-4">
+        <h1 class="intro-title">AI-Powered Manufacturing Intelligence</h1>
+        <p class="intro-subtitle">
+          Experience next-generation machine health assessment and defect prediction. Our dual-phase AI
+          evaluates equipment condition, warns of risks, and — if needed — identifies the defect with
+          corrective guidance. No technical expertise required.
+        </p>
+        <ul class="intro-list">
+          <li>Simple machine readings from the shop floor</li>
+          <li>Clear PASS/FAIL output with confidence score</li>
+          <li>Automatic defect classification when failure detected</li>
+        </ul>
+
+        <div class="d-flex gap-3 mt-4">
+          <!-- IMPORTANT: "startModelBtn" drives intro behaviour -->
+          <button id="startModelBtn" class="try-model-btn action-auth">🚀 Try Our AI Model</button>
+          <button id="introLearnMore" class="btn btn-outline-secondary">Learn How It Works</button>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-12">
+            <div class="intro-info-card">
+              <img src="{% static 'quali_defect_app/images/Production_Line.png' %}" alt="" class="intro-illustration">
+              <div>
+                <h5>Production Line Overview</h5>
+                <p>Core readings — temp, speed, torque, wear — evaluated by Model-1.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="intro-info-card">
+              <img src="{% static 'quali_defect_app/images/Automation_Monitoring.png' %}" alt="" class="intro-illustration">
+              <div>
+                <h5>Automation & Sensors</h5>
+                <p>Detects abnormal trends using real-time industrial signals.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="intro-info-card">
+              <img src="{% static 'quali_defect_app/images/Quality_Inspection.png' %}" alt="" class="intro-illustration">
+              <div>
+                <h5>Quality Inspection</h5>
+                <p>AI identifies defect type & suggests corrective actions.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="intro-flow-card mt-4">
+      <h4>How the dual-phase system works</h4>
+      <div class="intro-steps-grid">
+        <div>
+          <h6>Step 1 — Machine Health (Model-1)</h6>
+          <p>Reads operational data & classifies conditions as PASS or FAIL.</p>
+        </div>
+        <div>
+          <h6>Step 2 — Defect Analysis (Model-2)</h6>
+          <p>If FAIL, a second model predicts the defect & probabilities.</p>
+        </div>
+      </div>
+
+      <details class="intro-details">
+        <summary>What inputs do we use?</summary>
+        <div class="mt-2">
+          Includes temperatures, rpm, torque, tool wear, pressure, cooling time, flow rate & computed ratios — all shown clearly in the forms with tooltips.
+        </div>
+      </details>
+    </div>
+  </section>
+
+  {% if error %}
+  <div class="alert alert-danger text-center fw-bold">{{ error }}</div>
+  {% endif %}
+
+  <!-- ================= MODEL-1 FORM ================= -->
+  {% if show_model1_form %}
+  <div class="data-input-card mb-5" id="model1Section">
+    <div class="row">
+      <div class="col-md-5 p-4 border-end">
+        <h3 class="model-left-title">Machine Health Check</h3>
+        <div class="model-image-wrapper">
+          <img src="{% static 'quali_defect_app/images/model1_left.png' %}" class="model-left-image">
+        </div>
+      </div>
+
+      <div class="col-md-7 p-4">
+        <form method="POST" class="action-auth-form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="predict_model1">
+
+          <h4 class="fw-bold mb-3">Enter Machine Configurations</h4>
+
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label">Machine Level</label>
+              <select name="Machine_Level" class="form-select form-select-lg">
+                <option value="Low" {% if default_model1.Machine_Level == "Low" %}selected{% endif %}>Low</option>
+                <option value="Medium" {% if default_model1.Machine_Level == "Medium" %}selected{% endif %}>Medium</option>
+                <option value="High" {% if default_model1.Machine_Level == "High" %}selected{% endif %}>High</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Maintenance Indicator</label>
+              <select name="Maintenance_Indicator" class="form-select form-select-lg">
+                <option value="Yes" {% if default_model1.Maintenance_Indicator == "Yes" %}selected{% endif %}>Yes</option>
+                <option value="No" {% if default_model1.Maintenance_Indicator == "No" %}selected{% endif %}>No</option>
+              </select>
+            </div>
+
+            {% for field in features %}
+            <div class="col-md-6">
+              <div class="label-wrapper">
+                <label class="form-label">{{ field }}</label>
+                <span class="tooltip-icon">i</span>
+
+                <div class="tooltip-box">
+                  <div class="tooltip-title">Suggestion</div>
+                  {% if field == "Air_Temperature(Kelvin)" %}
+                    <div class="tooltip-line">Unit: Kelvin</div>
+                    <div class="tooltip-line">Range: 290–330</div>
+                  {% elif field == "Process_Temperature(Kelvin)" %}
+                    <div class="tooltip-line">Unit: Kelvin</div>
+                    <div class="tooltip-line">Range: 320–500</div>
+                  {% elif field == "Rotational_Speed(rpm)" %}
+                    <div class="tooltip-line">Unit: rpm</div>
+                    <div class="tooltip-line">Range: 800–6000</div>
+                  {% elif field == "Torque(Nm)" %}
+                    <div class="tooltip-line">Unit: Nm</div>
+                    <div class="tooltip-line">Range: 10–90</div>
+                  {% elif field == "Tool_Wear(min)" %}
+                    <div class="tooltip-line">Unit: min</div>
+                    <div class="tooltip-line">Range: 0–300</div>
+                  {% else %}
+                    <div class="tooltip-line">Unit: —</div>
+                    <div class="tooltip-line">Range: —</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <input
+                type="number"
+                step="any"
+                class="form-control form-control-lg"
+                name="{{ field }}"
+                value="{{ default_model1|get_item:field }}">
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="text-center mt-4">
+            <!-- analyze button requires auth -->
+            <button type="submit" class="analyze-btn px-5 action-auth">Analyze Machine</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ================= MODEL-1 RESULT (always shown when present) ================= -->
+  {% if model1_result %}
+  <div class="data-input-card mb-5" id="model1ResultCard">
+    <h4 class="fw-bold mb-3">Model-1 Input Summary</h4>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center align-middle">
+        <thead class="table-primary fw-bold">
+          <tr>
+            {% for col in model1_columns_readable %}
+            <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for v in model1_values %}
+            <td>{{ v }}</td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="result-card {% if model1_result.Predicted_Class == 'PASS' %}result-pass{% else %}result-fail{% endif %}">
+      <h4>Result: {{ model1_result.Predicted_Class }}</h4>
+      <p>Confidence: {{ model1_result.Confidence }}%</p>
+    </div>
+
+    <div class="text-center mt-4">
+      {% if model1_result.Predicted_Class == "FAIL" %}
+      <form method="POST" class="d-inline-block action-auth-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="go_model2">
+        <button class="proceed-btn action-auth">Proceed to Defect Detection</button>
+      </form>
+      {% endif %}
+
+      <form method="POST" class="d-inline-block ms-3">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="reset_all">
+        <button class="btn btn-secondary px-4">Predict Again</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ================= MODEL-2 FORM (only shown after user hits PROCEED) ================= -->
+  {% if show_model2_form and not model2_result %}
+  <div class="data-input-card mb-5" id="model2Section">
+    <div class="row">
+      <div class="col-md-5 p-4 border-end">
+        <h3 class="model-left-title">Defect Detection</h3>
+        <div class="model-image-wrapper">
+          <img src="{% static 'quali_defect_app/images/model2_left.png' %}" class="model-left-image">
+        </div>
+      </div>
+
+      <div class="col-md-7 p-4">
+        <form method="POST" class="action-auth-form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="predict_model2">
+
+          <h4 class="fw-bold mb-3">Enter Model-2 Inputs</h4>
+          <div class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label">Tool Condition</label>
+              <select name="Tool_Condition" class="form-select form-select-lg">
+                <option value="Good" {% if default_model2.Tool_Condition == "Good" %}selected{% endif %}>Good</option>
+                <option value="Worn" {% if default_model2.Tool_Condition == "Worn" %}selected{% endif %}>Worn</option>
+              </select>
+            </div>
+
+            {% for field in model2_features %}
+            {% if field != "Tool_Condition" %}
+            <div class="col-md-6">
+              <div class="label-wrapper">
+                <label class="form-label">{{ field }}</label>
+                <span class="tooltip-icon">i</span>
+                <div class="tooltip-box">
+                  <div class="tooltip-title">Suggestion</div>
+                  {% if field == "Melt_Temperature" %}
+                    <div class="tooltip-line">Unit: °C</div>
+                    <div class="tooltip-line">Range: 450–750</div>
+                  {% elif field == "Mold_Temperature" %}
+                    <div class="tooltip-line">Unit: °C</div>
+                    <div class="tooltip-line">Range: 150–300</div>
+                  {% elif field == "Casting_Pressure" %}
+                    <div class="tooltip-line">Unit: bar</div>
+                    <div class="tooltip-line">Range: 50–250</div>
+                  {% elif field == "Cooling_Time" %}
+                    <div class="tooltip-line">Unit: sec</div>
+                    <div class="tooltip-line">Range: 20–120</div>
+                  {% elif field == "Flow_Rate" %}
+                    <div class="tooltip-line">Unit: cm³/s</div>
+                    <div class="tooltip-line">Range: 5–50</div>
+                  {% elif field == "Ambient_Humidity" %}
+                    <div class="tooltip-line">Unit: %RH</div>
+                    <div class="tooltip-line">Range: 20–60</div>
+                  {% elif field == "Operator_Experience" %}
+                    <div class="tooltip-line">Unit: years</div>
+                    <div class="tooltip-line">Range: 0–20</div>
+                  {% else %}
+                    <div class="tooltip-line">Unit: —</div>
+                    <div class="tooltip-line">Range: —</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <input
+                type="number"
+                step="any"
+                name="{{ field }}"
+                class="form-control form-control-lg"
+                value="{{ default_model2|get_item:field }}">
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+
+          <div class="text-center mt-4">
+            <button class="analyze-btn px-5 action-auth">Detect Defect</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ================= MODEL-2 RESULT (shows when model2_result exists) ================= -->
+  {% if model2_result %}
+  <div class="data-input-card mb-5" id="model2ResultCard">
+    <h4 class="fw-bold mt-4 mb-3">Model-2 Input Summary</h4>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead class="table-primary">
+          <tr>
+            {% for col in model2_columns_readable %}
+            <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for v in model2_values %}
+            <td>{{ v }}</td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="result-card result-info mt-4">
+      <h4>Predicted Defect: {{ model2_result.Predicted_Defect }}</h4>
+      <p>Confidence: {{ model2_result.Confidence }}%</p>
+    </div>
+
+    <h5 class="fw-bold mt-3">Class Probabilities</h5>
+    <div class="probability-list">
+      {% for p in model2_result.Probabilities %}
+      <div class="probability-item d-flex justify-content-between p-2 border rounded mb-2">
+        <div>{{ p.label }}</div>
+        <strong>{{ p.prob }}%</strong>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-4">
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="reset_all">
+        <button class="btn btn-secondary px-4">Predict Again</button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // === AUTH FLAG (injected by Django) ===
+  const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
+  const loginModalEl = document.getElementById('loginPopup');
+  const loginModal = new bootstrap.Modal(loginModalEl);
+
+  // === INTRO VISIBILITY LOGIC ===
+  // localStorage key used to remember that the user has started the models.
+  // We'll only set this when an authenticated user clicks Start (so anonymous clicks don't hide intro).
+  const INTRO_KEY = "qs_intro_started_v1";
+
+  const introSection = document.getElementById("introSection");
+  const model1Section = document.getElementById("model1Section");
+
+  // If localStorage says started, hide intro; else keep shown.
+  if (localStorage.getItem(INTRO_KEY) === "yes") {
+    if (introSection) introSection.style.display = "none";
+    if (model1Section) model1Section.style.display = "";
+  } else {
+    // default: show intro and hide model1 so user sees intro clearly
+    if (introSection) introSection.style.display = "block";
+    if (model1Section) model1Section.style.display = "none";
+  }
+
+  // Start button behaviour:
+  const startBtn = document.getElementById("startModelBtn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      if (!isAuth) {
+        // If not authenticated, show login popup and DO NOT hide intro
+        loginModal.show();
+        return;
+      }
+      // If authenticated: hide intro and show model1. Persist the choice so intro stays hidden.
+      localStorage.setItem(INTRO_KEY, "yes");
+      if (introSection) introSection.style.display = "none";
+      if (model1Section) model1Section.style.display = "";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  // If the user manually logs out from navbar, you may call localStorage.removeItem(INTRO_KEY)
+  // — optionally implement that in your logout flow.
+
+  // === BLOCK actions/forms that require auth (show login modal) ===
+  document.querySelectorAll(".action-auth").forEach(btn => {
+    btn.addEventListener("click", function(e) {
+      if (!isAuth) {
+        e.preventDefault();
+        loginModal.show();
+      }
+    });
+  });
+
+  document.querySelectorAll(".action-auth-form").forEach(form => {
+    form.addEventListener("submit", function(e) {
+      if (!isAuth) {
+        e.preventDefault();
+        loginModal.show();
+      }
+    });
+  });
+
+  // === TOOLTIP INTERACTIVITY ===
+  // show tooltip-box when hovering the label-wrapper
+  document.querySelectorAll(".label-wrapper").forEach(wrapper => {
+    const icon = wrapper.querySelector(".tooltip-icon");
+    const box = wrapper.querySelector(".tooltip-box");
+    if (!icon || !box) return;
+    // CSS fallback: tooltip-box should be hidden by default in CSS; we toggle 'visible' class here
+    wrapper.addEventListener("mouseenter", () => box.classList.add("visible"));
+    wrapper.addEventListener("mouseleave", () => box.classList.remove("visible"));
+    // also allow focus for keyboard users
+    icon.addEventListener("focus", () => box.classList.add("visible"));
+    icon.addEventListener("blur", () => box.classList.remove("visible"));
+  });
+
+});
+</script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

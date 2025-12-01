@@ -1,0 +1,5 @@
+@keyframes slideFadeIn { 0%{transform:translateY(40px); opacity:0;} 100%{transform:translateY(0); opacity:1;} }
+@keyframes shineMove { 0%{transform:translateX(-200%);} 100%{transform:translateX(200%);} }
+@keyframes slideInLeft { from{opacity:0; transform:translateX(-40px);} to{opacity:1; transform:translateX(0);} }
+@keyframes slideInRight { from{opacity:0; transform:translateX(40px);} to{opacity:1; transform:translateX(0);} }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }

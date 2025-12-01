@@ -1,0 +1,56 @@
+{% extends 'quali_defect_app/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qs-auth-container">
+
+    <div class="qs-auth-card">
+
+        <h1 class="qs-auth-title">Welcome Back</h1>
+        <p class="qs-auth-subtitle">Login to continue to QualiSense</p>
+
+        {% if form.errors %}
+        <div class="alert alert-danger p-2 text-center">
+            Invalid username or password
+        </div>
+        {% endif %}
+
+        <form method="post" action="{% url 'login' %}?next={{ request.GET.next }}">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control"
+                    placeholder="Enter your username" required>
+            </div>
+
+            <div class="mb-3 position-relative">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" id="loginPassword"
+                       placeholder="Enter your password" required>
+
+                <i class="bi bi-eye password-toggle" onclick="
+                    const p = document.getElementById('loginPassword');
+                    p.type = p.type === 'password' ? 'text' : 'password';
+                "></i>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-2">
+                Login
+            </button>
+        </form>
+
+        <div class="qs-auth-footer">
+            New user? <a href="{% url 'signup' %}">Create an account</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% block footer %}{% endblock %}

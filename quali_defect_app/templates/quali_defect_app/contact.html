@@ -1,0 +1,129 @@
+{% extends 'quali_defect_app/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/contact.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= LOGIN POPUP (SHARED ACROSS SITE) ================= -->
+<div class="modal fade" id="loginPopup" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
+
+            <h4 class="text-center fw-bold mb-2">Login Required</h4>
+            <p class="text-center text-muted mb-4">Please login or sign up to send us a message.</p>
+
+            <div class="d-flex justify-content-around mb-3">
+                <a href="{% url 'login' %}" class="btn btn-primary px-4">Login</a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-primary px-4">Sign Up</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="qs-contact-page">
+
+  <!-- Banner -->
+  <div class="qs-contact-banner" data-aos="fade-up">
+    <h2 class="text-warning">Contact Us</h2>
+    <p class="text-primary">We are ready to support your Manufacturing Quality AI needs.</p>
+  </div>
+
+  <div class="container-fluid px-3 px-md-5 mt-5">
+    <div class="row g-4">
+
+      <!-- Contact Form -->
+      <div class="col-lg-6">
+        <div class="qs-contact-card qs-form-card" data-aos="fade-right">
+          <h3 class="mb-4 text-primary fw-bold">Send Us a Message</h3>
+
+          <form id='contactForm' method="POST" action="{% if user.is_authenticated %}{% url 'contact' %}{% else %}{% url 'login' %}?next={% url 'contact' %}{% endif %}">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label">Enter Your Name</label>
+              <input type="text" name="name" class="form-control"
+                     placeholder="Your full name" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Enter Your Email</label>
+              <input type="email" name="email" class="form-control"
+                     placeholder="your.email@example.com" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Enter Mobile Number</label>
+              <input type="text" name="mobile" class="form-control"
+                     placeholder="+91 98765 43210" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Write Your Message</label>
+              <textarea name="message" class="form-control" rows="4"
+                        placeholder="Tell us about your requirements..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-warning w-100 mt-3" id="contactSubmitBtn">
+              Send Message
+            </button>
+
+            {% if success %}
+            <script>
+              setTimeout(() => alert("✅ Your message has been sent successfully!"), 150);
+            </script>
+            {% endif %}
+          </form>
+
+        </div>
+      </div>
+
+      <!-- Contact Details -->
+      <div class="col-lg-6">
+        <div class="qs-contact-card" data-aos="fade-left">
+          <h3 class="mb-4 text-primary fw-bold">Get in Touch</h3>
+
+          <div class="qs-contact-info">
+            <p><strong>Address:</strong> 301 Street Number 2A, Bhagyanagar Colony, KPHB Main Road</p>
+            <p><strong>Email:</strong> support@company.com</p>
+            <p><strong>Phone:</strong> +91 98765 43210</p>
+          </div>
+
+          <h2 class="mt-4 text-primary fw-bold">Company Location</h2>
+
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1902.6379392242732!2d78.40190779896851!3d17.494339269345108!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb91f20663c46d%3A0x846796db82f76735!2sSocial%20Prachar!5e0!3m2!1sen!2sin!4v1763551765680!5m2!1sen!2sin"
+            allowfullscreen loading="lazy"></iframe>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
+
+<script>
+// LOGIN CHECK BEFORE CONTACT FORM SUBMISSION
+document.getElementById("contactForm").addEventListener("submit", function (event) {
+    const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
+
+    if (!isAuth) {
+        event.preventDefault();  // stop form from submitting
+        const popup = new bootstrap.Modal(document.getElementById('loginPopup'));
+        popup.show();
+    }
+});
+</script>
+{% endblock %}

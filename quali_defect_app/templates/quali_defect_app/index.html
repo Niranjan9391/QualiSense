@@ -1,0 +1,258 @@
+{% extends 'quali_defect_app/base.html' %}
+{% load static %}
+
+{% block title %}QualiSense – Home{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= LOGIN POPUP MODAL ================= -->
+<div class="modal fade" id="loginPopup" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
+
+            <h4 class="text-center fw-bold mb-2">Login Required</h4>
+            <p class="text-center text-muted mb-4">Please login or create an account to explore our AI models.</p>
+
+            <div class="d-flex justify-content-around mb-3">
+                <a href="{% url 'login' %}?next={% url 'data_input' %}" 
+   class="btn btn-primary px-4">Login</a>
+
+<a href="{% url 'signup' %}?next={% url 'data_input' %}" 
+   class="btn btn-outline-primary px-4">Sign Up</a>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- ================= HERO CAROUSEL ================= -->
+<div id="heroCarousel" class="carousel slide bg-primary" data-bs-ride="carousel" data-bs-interval="2500">
+
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    </div>
+
+    <div class="carousel-inner">
+
+        <!-- Slide 1 -->
+        <div class="carousel-item active">
+            <img src="{% static 'quali_defect_app/images/home_bg_1.jpeg' %}" class="d-block w-100 hero-img">
+            <div class="carousel-caption">
+                <h1 class="gradient-heading">Transform Your Factory With Intelligent Quality AI</h1>
+                <p class="lead">Predict failures before they happen, reduce waste, and maintain stable production 24/7.</p>
+
+                <!-- UPDATED BUTTON -->
+                <button class="btn btn-primary btn-lg explore-btn">Explore Model →</button>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="carousel-item">
+            <img src="{% static 'quali_defect_app/images/home_bg_2.jpg' %}" class="d-block w-100 hero-img">
+            <div class="carousel-caption">
+                <h1 class="gradient-heading">AI-Powered Defect Detection for Zero-Defect Manufacturing</h1>
+                <p class="lead">Identify cracks, porosity, weld defects, and casting flaws instantly with AI precision.</p>
+
+                <button class="btn btn-primary btn-lg explore-btn">Explore Model →</button>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="carousel-item">
+            <img src="{% static 'quali_defect_app/images/home_bg_3.png' %}" class="d-block w-100 hero-img">
+            <div class="carousel-caption">
+                <h1 class="gradient-heading">Smart Analytics for Smarter Production Decisions</h1>
+                <p class="lead">Analyze batch behavior, operator efficiency, tool wear, and quality trends in one dashboard.</p>
+
+                <button class="btn btn-primary btn-lg explore-btn">Explore Model →</button>
+            </div>
+        </div>
+
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+
+</div>
+
+
+
+<!-- ================= WHAT WE OFFER ================= -->
+<section class="py-5 offer-section">
+    <h2 class="text-center fw-bold display-6 gradient-heading mb-5">What We Offer</h2>
+
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+
+            <!-- Card 1 -->
+            <div class="col-md-4 d-flex">
+                <div class="offer-card animate-left">
+                    <div class="offer-icon-box bg-primary-dark">
+                        <img src="https://cdn-icons-png.flaticon.com/512/9698/9698964.png" alt="AI Prediction Icon">
+                    </div>
+                    <div class="p-4">
+                        <h4 class="offer-card-title">Product Quality Prediction</h4>
+                        <p class="text-muted">AI model predicts PASS/FAIL using machine sensor data.</p>
+                        <ul class="offer-features">
+                            <li><i class="bi bi-check-circle-fill"></i> Real-time monitoring</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Predict risk & failure chance</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Automatic alerts</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="col-md-4 d-flex">
+                <div class="offer-card animate-right">
+                    <div class="offer-icon-box bg-primary-dark">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2920/2920314.png" alt="Defect Detection Icon">
+                    </div>
+                    <div class="p-4">
+                        <h4 class="offer-card-title">Welding & Casting Defect Detection</h4>
+                        <p class="text-muted">Detect cracks, porosity, blowholes using AI image inspection.</p>
+                        <ul class="offer-features">
+                            <li><i class="bi bi-check-circle-fill"></i> Automatic defect detection</li>
+                            <li><i class="bi bi-check-circle-fill"></i> High accuracy image analysis</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Optimize welding & casting process</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="col-md-4 d-flex">
+                <div class="offer-card animate-left">
+                    <div class="offer-icon-box bg-primary-dark">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1995/1995565.png" alt="Optimization Icon">
+                    </div>
+                    <div class="p-4">
+                        <h4 class="offer-card-title">Operational Optimization</h4>
+                        <p class="text-muted">Find performance trends, tool wear, operator consistency.</p>
+                        <ul class="offer-features">
+                            <li><i class="bi bi-check-circle-fill"></i> Tool wear pattern detection</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Operator performance scoring</li>
+                            <li><i class="bi bi-check-circle-fill"></i> Quality trend analytics</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<!-- ================= INDUSTRY IMPACT ================= -->
+<section class="py-5 impact-section text-white">
+    <div class="container">
+
+        <h2 class="text-center fw-bold display-5 gradient-heading mb-4 animate-fade">
+            Why This Matters for Manufacturers
+        </h2>
+
+        <div class="col-md-10 mx-auto p-4 rounded-4 shadow-lg glass-box animate-left">
+
+            <p class="fs-5">Even small process deviations can lead to major quality issues. AI empowers factories to achieve:</p>
+
+            <ul class="fs-5">
+                <li>🔧 <strong>Reduced scrap and downtime</strong> through predictive alerts</li>
+                <li>🏭 <strong>Higher throughput</strong> with optimized production flows</li>
+                <li>📊 <strong>Consistent operator & batch performance</strong></li>
+                <li>💡 <strong>Early defect detection</strong> using real-time analytics</li>
+            </ul>
+
+            <p class="fs-5 mt-3">
+                QualiSense shifts your quality strategy from <strong>reactive inspection</strong> to 
+                <strong>proactive prevention</strong>.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+
+
+<!-- ================= KEY FEATURES ================= -->
+<section class="py-5 features-section">
+    <div class="container">
+        <h2 class="text-center fw-bold display-6 gradient-heading mb-5 animate-fade">Key Features at a Glance</h2>
+
+        <div class="row g-4 justify-content-center">
+
+            <div class="col-md-4 d-flex">
+                <div class="card shadow text-center p-4 animate-right w-100 d-flex flex-column">
+                    <div class="display-6 text-primary mb-3">🖥</div>
+                    <h4 class="fw-bold text-primary">Real-time Dashboard</h4>
+                    <p class="text-muted small mt-auto">Live monitoring from any device.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 d-flex">
+                <div class="card shadow text-center p-4 animate-left w-100 d-flex flex-column">
+                    <div class="display-6 text-primary mb-3">🔔</div>
+                    <h4 class="fw-bold text-primary">Instant Alerts</h4>
+                    <p class="text-muted small mt-auto">Get notified when risk levels increase.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 d-flex">
+                <div class="card shadow text-center p-4 animate-right w-100 d-flex flex-column">
+                    <div class="display-6 text-primary mb-3">📦</div>
+                    <h4 class="fw-bold text-primary">Batch Analytics</h4>
+                    <p class="text-muted small mt-auto">Track which batches/operators deliver best quality.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<!-- ================= CTA SECTION ================= -->
+<section class="py-5 text-center text-white cta-section">
+    <div class="container">
+        <h2 class="fw-bold display-6">Ready to Turn Data into Quality Performance?</h2>
+        <p class="col-md-7 mx-auto mt-3 mb-4 opacity-75">
+            Manufacturers trust QualiSense for early defect detection and improved efficiency.
+        </p>
+        <a href="{% url 'contact' %}" class="btn btn-info btn-lg">Get in Touch →</a>
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    // Login-check for ALL Explore buttons
+    document.querySelectorAll(".explore-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+
+            const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
+
+            if (isAuth) {
+                window.location.href = "{% url 'data_input' %}";
+            } else {
+                var popup = new bootstrap.Modal(document.getElementById('loginPopup'));
+                popup.show();
+            }
+        });
+    });
+</script>
+{% endblock %}

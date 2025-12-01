@@ -1,0 +1,84 @@
+{% load static %}
+
+<footer class="footer text-light pt-5 pb-4 mt-5">
+<div class="container">
+    <div class="row">
+
+        <!-- Brand -->
+        <div class="col-md-3 mb-4">
+            <div class="d-flex align-items-center gap-3">
+                <div class="footer-logo">Q</div>
+                <h4 class="fw-bold mb-0">Quali<span style="color:#07ff8b;">Sense</span></h4>
+            </div>
+            <p class="mt-3 footer-description">
+                Smarter quality inspection and analytics for modern manufacturing.
+            </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="col-md-3 mb-4">
+            <h5 class="fw-semibold text-warning">Quick Links</h5>
+            <ul class="list-unstyled mt-3">
+                <li><a href="{% url 'index' %}"
+                       class="footer-link {% if request.resolver_match.url_name == 'index' %}active-footer-link{% endif %}">
+                       Home</a></li>
+
+                <li><a href="{% url 'data_input' %}"
+                       class="footer-link {% if request.resolver_match.url_name == 'data_input' %}active-footer-link{% endif %}">
+                       Our AI</a></li>
+
+                <li><a href="{% url 'about' %}"
+                       class="footer-link {% if request.resolver_match.url_name == 'about' %}active-footer-link{% endif %}">
+                       About Us</a></li>
+
+                <li><a href="{% url 'contact' %}"
+                       class="footer-link {% if request.resolver_match.url_name == 'contact' %}active-footer-link{% endif %}">
+                       Contact Us</a></li>
+            </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="col-md-3 mb-4">
+            <h5 class="fw-semibold text-warning">Contact</h5>
+            <ul class="list-unstyled mt-3 contact-list">
+                <li class="mb-2">support@qualisense.com</li>
+                <li class="mb-2">+91 98765 43210</li>
+                <li>India</li>
+            </ul>
+        </div>
+
+        <!-- Social -->
+        <div class="col-md-3 mb-4">
+            <h5 class="fw-semibold text-warning">Follow Us</h5>
+            <ul class="list-unstyled mt-3 social-list">
+                <li><a href="#" class="d-flex align-items-center footer-link">
+                    <i class="bi bi-facebook me-2 social-icon"></i> Facebook
+                </a></li>
+
+                <li><a href="#" class="d-flex align-items-center footer-link">
+                    <i class="bi bi-linkedin me-2 social-icon"></i> LinkedIn
+                </a></li>
+
+                <li><a href="#" class="d-flex align-items-center footer-link">
+                    <i class="bi bi-twitter me-2 social-icon"></i> Twitter
+                </a></li>
+
+                <li><a href="#" class="d-flex align-items-center footer-link">
+                    <i class="bi bi-instagram me-2 social-icon"></i> Instagram
+                </a></li>
+
+                <li><a href="#" class="d-flex align-items-center footer-link">
+                    <i class="bi bi-youtube me-2 social-icon"></i> YouTube
+                </a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <hr class="border-light mt-4">
+
+    <div class="text-center small footer-copy">
+        © 2025 QualiSense · All Rights Reserved.
+    </div>
+</div>
+</footer>

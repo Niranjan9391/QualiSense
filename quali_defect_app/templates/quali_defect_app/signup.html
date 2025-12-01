@@ -1,0 +1,86 @@
+{% extends 'quali_defect_app/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="qs-auth-container">
+
+    <div class="qs-auth-card">
+
+        <h1 class="qs-auth-title">Create Account</h1>
+        <p class="qs-auth-subtitle">Join QualiSense today</p>
+
+        {% if form.errors %}
+<div class="alert alert-danger p-2 text-center mb-3">
+    Please fix the errors below.
+</div>
+
+<ul class="text-danger small">
+    {% for field in form %}
+        {% for error in field.errors %}
+            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+        {% endfor %}
+    {% endfor %}
+    
+    {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+        <form method="post" action="{% url 'signup' %}?next={{ request.GET.next }}">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control"
+                       placeholder="Choose a username" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control"
+                       placeholder="your@email.com" Required>
+            </div>
+
+            <div class="mb-3 position-relative">
+                <label class="form-label">Password</label>
+                <input type="password" name="password1" class="form-control" id="signupPassword1"
+                       placeholder="Create password" required>
+
+                <i class="bi bi-eye password-toggle" onclick="
+                    const p = document.getElementById('signupPassword1');
+                    p.type = p.type === 'password' ? 'text' : 'password';
+                "></i>
+            </div>
+
+            <div class="mb-3 position-relative">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" name="password2" class="form-control" id="signupPassword2"
+                       placeholder="Confirm password" required>
+
+                <i class="bi bi-eye password-toggle" onclick="
+                    const p = document.getElementById('signupPassword2');
+                    p.type = p.type === 'password' ? 'text' : 'password';
+                "></i>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-2">
+                Create Account
+            </button>
+        </form>
+
+        <div class="qs-auth-footer">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% block footer %}{% endblock %}

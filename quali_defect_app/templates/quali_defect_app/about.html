@@ -1,0 +1,119 @@
+{% extends "quali_defect_app/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/about.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<!-- ================= LOGIN POPUP (Shared globally) ================= -->
+<div class="modal fade" id="loginPopup" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4">
+
+            <h4 class="text-center fw-bold mb-2">Login Required</h4>
+            <p class="text-center text-muted mb-4">
+                Please login or create an account to access AI model features.
+            </p>
+
+            <div class="d-flex justify-content-around mb-2">
+                <a href="{% url 'login' %}" class="btn btn-primary px-4">Login</a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-primary px-4">Sign Up</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="about-page">
+
+  <!-- HEADER -->
+  <div class="container about-header">
+    <header class="about-header-inner">
+      <div class="about-title">About <span>Us</span></div>
+      <div class="about-status">System Online</div>
+    </header>
+  </div>
+
+  <!-- HERO SECTION -->
+  <div class="container about-hero reveal">
+    <div class="about-hero-content">
+      <h1 class="about-gradient-title">
+        Intelligence for the<br>Factory Floor.
+      </h1>
+
+      <p class="about-hero-text">
+        Predictive analytics and machine-aware intelligence to
+        <span class="about-highlight">reduce defects</span> and improve
+        <span class="about-highlight">first-pass yield</span>. We deliver
+        measurable outcomes through precision data science.
+      </p>
+
+      <a href="{% url 'index' %}" class="about-btn-hero">
+        Explore Our Mission
+      </a>
+    </div>
+
+    <div class="about-hero-visual">
+      <div class="about-tech-card">
+        <div class="about-orbit-ring"></div>
+        <div class="about-orbit-ring-2"></div>
+
+        <div class="about-core">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none"
+               stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+          </svg>
+        </div>
+
+        <div class="about-chip chip-1">
+          <div class="chip-icon success">✓</div>
+          <div>Efficiency<br>98.4%</div>
+        </div>
+
+        <div class="about-chip chip-2">
+          <div class="chip-icon primary">⚡</div>
+          <div>Latency<br>4ms</div>
+        </div>
+
+        <div class="about-chip chip-3">
+          <div class="chip-icon purple">🧠</div>
+          <div>AI Model<br>Active</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MISSION -->
+  <div class="container about-mission reveal">
+    <h2>
+      QualiSense turns noisy sensor data into
+      <span>precision manufacturing intelligence.</span>
+    </h2>
+  </div>
+
+  <!-- CORE CAPABILITIES -->
+  <section class="about-core-section">
+    <div class="container">
+      <div class="text-center">
+        <h2>Core Engine</h2>
+        <p>Six production-ready modules powering real-world factories.</p>
+      </div>
+
+      <div class="about-cap-grid reveal">
+        <div class="about-cap-card"><span>⚙</span><h3>CNC Intelligence</h3><p>Vibration signal analysis detects early wear.</p></div>
+        <div class="about-cap-card"><span>⚡</span><h3>Welding QA</h3><p>Computer vision catches porosity & bead issues.</p></div>
+        <div class="about-cap-card"><span>🏭</span><h3>Assembly Flow</h3><p>Monitor cycle times & remove bottlenecks.</p></div>
+        <div class="about-cap-card"><span>📡</span><h3>Sensor Fusion</h3><p>Merge acoustic & thermal diagnostics.</p></div>
+        <div class="about-cap-card"><span>🔮</span><h3>Predictive Maint.</h3><p>Forecast breakdowns before they happen.</p></div>
+        <div class="about-cap-card"><span>👁</span><h3>Visual Inspection</h3><p>Automated defect detection — 99.9% accuracy.</p></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+{% endblock %}

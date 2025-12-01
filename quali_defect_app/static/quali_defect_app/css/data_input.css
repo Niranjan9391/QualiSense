@@ -1,0 +1,261 @@
+/* ------------------------------
+   DATA INPUT CARD
+------------------------------ */
+.data-input-card {
+    background:#f8faff;
+    padding:28px;
+    border-radius:20px;
+    box-shadow:0 6px 22px rgba(30,42,71,0.11);
+    border:1px solid rgba(180,195,230,0.35);
+}
+
+/* IMAGE SECTION */
+.model-image-wrapper { width: 100%; padding:0 6px; }
+.model-left-image {
+    width:100%; height:auto; object-fit:cover; display:block;
+    border-radius:14px; margin:0 auto 14px auto;
+    box-shadow:0 6px 16px rgba(0,0,0,0.12);
+}
+.model-left-title { font-size:22px; font-weight:700; color:#1e2a47; margin-bottom:14px; }
+
+/* MODEL TABS */
+.model-tabs-container { display:flex; gap:12px; margin-bottom:18px; }
+.model-tab { padding:10px 18px; background:#eef2ff; border-radius:8px; font-weight:700; cursor:pointer; border:1px solid #d7defb; transition:0.25s; }
+.model-tab.active { background:#304ffe; color:#fff; box-shadow:0 6px 18px rgba(48,79,254,0.12); }
+
+/* INPUT FIELDS */
+.form-control-lg, .form-select-lg {
+    border-radius:12px !important;
+    padding:6px 8px !important;
+    background:#f9fbff !important;
+    border:1.5px solid #d4d9e5 !important;
+    transition:all .25s ease !important;
+    font-weight:500 !important;
+    font-size:18px !important;
+}
+.form-control-lg:focus, .form-select-lg:focus { background:#fff !important; border-color:#1e2a47 !important; }
+
+/* LABEL + TOOLTIP */
+.form-label {
+    display:flex !important;
+    align-items:center !important;
+    gap:8px !important;
+    font-weight:700 !important;
+    color:#1e2a47 !important;
+    font-size:15px !important;
+    margin-bottom:6px !important;
+    white-space:nowrap;
+}
+.label-wrapper { display:inline-flex; align-items:center; gap:8px; position:relative; }
+
+.tooltip-icon {
+    display:flex; justify-content:center; align-items:center;
+    width:18px; height:18px; font-size:12px; font-weight:700;
+    border-radius:50%; background:#1e2a47; color:#fff;
+    box-shadow:0 2px 6px rgba(0,0,0,0.12);
+}
+.tooltip-icon:hover { transform:translateY(-2px); background:#2f56d6; }
+
+.tooltip-box {
+    position:absolute; bottom:calc(100% + 10px); left:50%;
+    transform:translateX(-50%) translateY(6px);
+    background:#0d1a33; color:#fff; padding:10px 12px;
+    border-radius:8px; width:260px; max-width:calc(100vw - 40px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    opacity:0; visibility:hidden; transition:0.18s;
+}
+.label-wrapper:hover .tooltip-box,
+.label-wrapper:focus-within .tooltip-box {
+    opacity:1; visibility:visible; transform:translateX(-50%) translateY(0);
+}
+
+
+/* -------------------------------------
+   INTRO SECTION BEFORE MODEL INPUT
+-------------------------------------- */
+#introSection {
+    background: linear-gradient(135deg, #eef3ff, #f9fbff);
+    padding: 52px 38px;
+    border-radius: 26px;
+    box-shadow: 0 10px 42px rgba(30,42,71,0.14);
+    border: 1px solid rgba(180,195,230,0.45);
+    transition: 0.35s ease;
+}
+#introSection:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 52px rgba(30,42,71,0.18);
+}
+
+.intro-title {
+    font-size: 42px;
+    font-weight: 800;
+    color: #1e2a47;
+    line-height: 1.25;
+    margin-bottom: 16px;
+}
+.intro-subtitle {
+    font-size: 18px;
+    color: #3b4b6d;
+    line-height: 1.55;
+    margin-bottom: 22px;
+}
+.intro-list {
+    padding-left: 20px;
+    margin-bottom: 26px;
+}
+.intro-list li {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #263a59;
+}
+
+/* Feature Cards */
+.intro-info-card {
+    background: #ffffff;
+    padding: 16px 18px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid rgba(180,195,230,0.35);
+    box-shadow: 0 6px 20px rgba(30,42,71,0.10);
+    transition: 0.3s ease;
+}
+.intro-info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 28px rgba(30,42,71,0.16);
+}
+.intro-illustration {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+/* Flow explanation card */
+.intro-flow-card {
+    margin-top: 34px;
+    padding: 30px 32px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid rgba(180,195,230,0.35);
+    box-shadow: 0 8px 28px rgba(30,42,71,0.12);
+}
+.intro-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+    margin-top: 18px;
+}
+
+.animate-fade {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* -------------------------------------
+   BUTTONS
+-------------------------------------- */
+.try-model-btn,
+.analyze-btn,
+.proceed-btn {
+    background:#1e2a47;
+    color:#fff;
+    padding:14px 32px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:700;
+    border:none;
+    cursor:pointer;
+    transition:0.25s ease;
+}
+.try-model-btn:hover,
+.analyze-btn:hover,
+.proceed-btn:hover {
+    background:#304ffe;
+    transform:translateY(-2px);
+}
+
+/* Secondary action button */
+.retry-btn {
+    background:#6b7280;
+    color:#fff;
+    padding:14px 34px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    transition:0.25s ease;
+}
+.retry-btn:hover {
+    background:#4b5563;
+    transform:translateY(-1px);
+}
+
+
+/* -------------------------------------
+   PROCEED / RESET BUTTON LAYOUT
+-------------------------------------- */
+.next-step-container {
+    margin-top: 60px;
+    padding: 0 40px;
+}
+.next-step-container {
+    margin-top: 60px;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.right-section {
+    margin-top: 42px; /* aligns visually with Proceed */
+}
+
+.next-step-label {
+    font-size: 16px;
+    font-weight: 450;
+    color: #1e2a47;
+}
+
+
+
+/* -------------------------------------
+RESPONSIVE
+-------------------------------------- */
+@media (max-width:768px) {
+    .model-image-wrapper { padding:0 4px; }
+    .data-input-card .row { flex-direction:column !important; }
+    .border-end { border:none !important; }
+    .intro-title { font-size: 32px; }
+    .intro-steps-grid { grid-template-columns: 1fr; }
+    .next-step-actions {
+        flex-direction: column;
+        gap: 14px;
+        text-align:center;
+    }
+}
+
+@media (max-width:768px) {
+    .next-step-container {
+        flex-direction: column;
+        text-align: center;
+        padding: 0 10px;
+    }
+    .right-section {
+        margin-top: 18px;
+    }
+}
+

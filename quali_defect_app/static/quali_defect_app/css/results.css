@@ -1,0 +1,43 @@
+.result-card {
+    text-align:center;
+    font-size:22px;
+    font-weight:700;
+    padding:26px;
+    border-radius:16px;
+    margin-top:28px;
+    transition:.3s ease;
+}
+
+/* PASS */
+.result-pass {
+    background:#d1fae5;
+    border:2px solid #10b981;
+    color:#065f46;
+}
+
+/* FAIL */
+.result-fail {
+    background:#fee2e2;
+    border:2px solid #ef4444;
+    color:#7f1d1d;
+}
+
+/* Model-2 Informational */
+.result-info {
+    background:#e0e7ff;
+    border:2px solid #4338ca;
+    color:#1e1b4b;
+}
+
+.probability-item {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 40%, #06b6d4 100%);
+    padding:12px 18px;
+    border-radius:10px;
+    margin-bottom:10px;
+    border:1px solid rgba(180,195,230,0.35);
+    font-weight:600;
+    font-size:15px;
+}

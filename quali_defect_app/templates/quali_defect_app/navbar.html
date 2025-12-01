@@ -1,0 +1,70 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm custom-navbar">
+    <div class="container">
+
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'index' %}">
+            <div class="brand-logo">
+                <img src="{% static 'quali_defect_app/images/logo.svg' %}" 
+                     alt="QualiSense company logo"
+                     class="nav-logo">
+            </div>
+
+            <span class="brand-text animated-title">
+                <span>Q</span><span>u</span><span>a</span><span>l</span>
+                <span>i</span><span>S</span><span>e</span><span>n</span>
+                <span>s</span><span>e</span>
+            </span>
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu Items -->
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+
+                <li class="nav-item">
+                    <a class="nav-link nav-anim {% if request.resolver_match.url_name == 'index' %}active-link{% endif %}"
+                       href="{% url 'index' %}">Home</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-anim {% if request.resolver_match.url_name == 'data_input' %}active-link{% endif %}"
+                       href="{% url 'data_input' %}">Our AI</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-anim {% if request.resolver_match.url_name == 'about' %}active-link{% endif %}"
+                       href="{% url 'about' %}">About Us</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link nav-anim {% if request.resolver_match.url_name == 'contact' %}active-link{% endif %}"
+                       href="{% url 'contact' %}">Contact Us</a>
+                </li>
+
+                <!-- Authentication Buttons -->
+                {% if user.is_authenticated %}
+                    <li class="nav-item ms-3">
+                        <span class="nav-link text-info">Hi, {{ user.username }}</span>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-2" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light ms-3" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-primary ms-2" href="{% url 'signup' %}">Sign Up</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

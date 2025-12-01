@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: qualisense
+    env: python
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn qualisense_project.wsgi:application"
+    plan: free
+    disk:
+      name: qualisense_disk
+      mountPath: /opt/render/project/src/disk
+      sizeGB: 1
