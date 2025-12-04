@@ -75,21 +75,23 @@ TEMPLATES = [
 WSGI_APPLICATION = "qualisense_project.wsgi.application"
 
 
-# Database (PostgreSQL)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
-        'USER': 'postgres',
-        'PASSWORD': 'Niru@9391',
-        'HOST': 'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "mydb",
+        "USER": "postgres",
+        'PASSWORD': os.environ.get('DB_LOCAL_PASSWORD', 'Niru@9391'),
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
+# Override if DATABASE_URL is provided (Render + Neon)
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(
+if DATABASE_URL and DATABASE_URL.strip() != "":
+    DATABASES["default"] = dj_database_url.parse(
+        DATABASE_URL,
         conn_max_age=600,
         ssl_require=True
     )
