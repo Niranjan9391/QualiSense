@@ -230,6 +230,72 @@
     color: #1e2a47;
 }
 
+/* ======== Chart Container Styles ======== */
+.chart-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.chart-small {
+    max-width: 260px;      /* Reduce size */
+    max-height: 260px;
+}
+
+/* ======== Side-by-Side Charts (Model-2) ======== */
+/* ======== Better chart layout ======== */
+.model2-chart-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 32px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+/* Each chart container */
+.model2-chart-col {
+    flex: 1;
+    min-width: 260px;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.model2-chart-title {
+    font-weight: 700;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+/* Make chart smaller + neat */
+.chart-medium {
+    max-width: 320px;
+    max-height: 320px;
+    margin: 0 auto;
+}
+
+/* Responsive stack on mobile */
+@media (max-width: 768px) {
+    .model2-chart-row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .model2-chart-col {
+        width: 100%;
+        max-width: 450px;
+    }
+}
+
+
+
 
 
 /* -------------------------------------

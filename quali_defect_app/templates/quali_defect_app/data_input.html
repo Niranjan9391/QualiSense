@@ -113,137 +113,143 @@
   {% endif %}
 
   <!-- ================= MODEL-1 FORM ================= -->
-  {% if show_model1_form %}
-  <div class="data-input-card mb-5" id="model1Section">
-    <div class="row">
-      <div class="col-md-5 p-4 border-end">
-        <h3 class="model-left-title">Machine Health Check</h3>
-        <div class="model-image-wrapper">
-          <img src="{% static 'quali_defect_app/images/model1_left.png' %}" class="model-left-image">
-        </div>
+{% if show_model1_form %}
+<div class="data-input-card mb-5" id="model1Section">
+  <div class="row">
+    <div class="col-md-5 p-4 border-end">
+      <h3 class="model-left-title">Machine Health Check</h3>
+      <div class="model-image-wrapper">
+        <img src="{% static 'quali_defect_app/images/model1_left.png' %}" class="model-left-image">
       </div>
+    </div>
 
-      <div class="col-md-7 p-4">
-        <form method="POST" class="action-auth-form">
-          {% csrf_token %}
-          <input type="hidden" name="action" value="predict_model1">
+    <div class="col-md-7 p-4">
+      <form method="POST" class="action-auth-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="predict_model1">
 
-          <h4 class="fw-bold mb-3">Enter Machine Configurations</h4>
+        <h4 class="fw-bold mb-3">Enter Machine Configurations</h4>
 
-          <div class="row g-4">
-            <div class="col-md-6">
-              <label class="form-label">Machine Level</label>
-              <select name="Machine_Level" class="form-select form-select-lg">
-                <option value="Low" {% if default_model1.Machine_Level == "Low" %}selected{% endif %}>Low</option>
-                <option value="Medium" {% if default_model1.Machine_Level == "Medium" %}selected{% endif %}>Medium</option>
-                <option value="High" {% if default_model1.Machine_Level == "High" %}selected{% endif %}>High</option>
-              </select>
-            </div>
+        <div class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label">Machine Level</label>
+            <select name="Machine_Level" class="form-select form-select-lg">
+              <option value="Low" {% if default_model1.Machine_Level == "Low" %}selected{% endif %}>Low</option>
+              <option value="Medium" {% if default_model1.Machine_Level == "Medium" %}selected{% endif %}>Medium</option>
+              <option value="High" {% if default_model1.Machine_Level == "High" %}selected{% endif %}>High</option>
+            </select>
+          </div>
 
-            <div class="col-md-6">
-              <label class="form-label">Maintenance Indicator</label>
-              <select name="Maintenance_Indicator" class="form-select form-select-lg">
-                <option value="Yes" {% if default_model1.Maintenance_Indicator == "Yes" %}selected{% endif %}>Yes</option>
-                <option value="No" {% if default_model1.Maintenance_Indicator == "No" %}selected{% endif %}>No</option>
-              </select>
-            </div>
+          <div class="col-md-6">
+            <label class="form-label">Maintenance Indicator</label>
+            <select name="Maintenance_Indicator" class="form-select form-select-lg">
+              <option value="Yes" {% if default_model1.Maintenance_Indicator == "Yes" %}selected{% endif %}>Yes</option>
+              <option value="No" {% if default_model1.Maintenance_Indicator == "No" %}selected{% endif %}>No</option>
+            </select>
+          </div>
 
-            {% for field in features %}
-            <div class="col-md-6">
-              <div class="label-wrapper">
-                <label class="form-label">{{ field }}</label>
-                <span class="tooltip-icon">i</span>
+          {% for field in features %}
+          <div class="col-md-6">
+            <div class="label-wrapper">
+              <label class="form-label">{{ field }}</label>
+              <span class="tooltip-icon">i</span>
 
-                <div class="tooltip-box">
-                  <div class="tooltip-title">Suggestion</div>
-                  {% if field == "Air_Temperature(Kelvin)" %}
-                    <div class="tooltip-line">Unit: Kelvin</div>
-                    <div class="tooltip-line">Range: 290–330</div>
-                  {% elif field == "Process_Temperature(Kelvin)" %}
-                    <div class="tooltip-line">Unit: Kelvin</div>
-                    <div class="tooltip-line">Range: 320–500</div>
-                  {% elif field == "Rotational_Speed(rpm)" %}
-                    <div class="tooltip-line">Unit: rpm</div>
-                    <div class="tooltip-line">Range: 800–6000</div>
-                  {% elif field == "Torque(Nm)" %}
-                    <div class="tooltip-line">Unit: Nm</div>
-                    <div class="tooltip-line">Range: 10–90</div>
-                  {% elif field == "Tool_Wear(min)" %}
-                    <div class="tooltip-line">Unit: min</div>
-                    <div class="tooltip-line">Range: 0–300</div>
-                  {% else %}
-                    <div class="tooltip-line">Unit: —</div>
-                    <div class="tooltip-line">Range: —</div>
-                  {% endif %}
-                </div>
+              <div class="tooltip-box">
+                <div class="tooltip-title">Suggestion</div>
+                {% if field == "Air_Temperature(Kelvin)" %}
+                <div class="tooltip-line">Unit: Kelvin</div>
+                <div class="tooltip-line">Range: 290–330</div>
+                {% elif field == "Process_Temperature(Kelvin)" %}
+                <div class="tooltip-line">Unit: Kelvin</div>
+                <div class="tooltip-line">Range: 320–500</div>
+                {% elif field == "Rotational_Speed(rpm)" %}
+                <div class="tooltip-line">Unit: rpm</div>
+                <div class="tooltip-line">Range: 800–6000</div>
+                {% elif field == "Torque(Nm)" %}
+                <div class="tooltip-line">Unit: Nm</div>
+                <div class="tooltip-line">Range: 10–90</div>
+                {% elif field == "Tool_Wear(min)" %}
+                <div class="tooltip-line">Unit: min</div>
+                <div class="tooltip-line">Range: 0–300</div>
+                {% else %}
+                <div class="tooltip-line">Unit: —</div>
+                <div class="tooltip-line">Range: —</div>
+                {% endif %}
               </div>
-
-              <input
-                type="number"
-                step="any"
-                class="form-control form-control-lg"
-                name="{{ field }}"
-                value="{{ default_model1|get_item:field }}">
             </div>
-            {% endfor %}
+
+            <input
+              type="number"
+              step="any"
+              class="form-control form-control-lg"
+              name="{{ field }}"
+              value="{{ default_model1|get_item:field }}">
           </div>
+          {% endfor %}
+        </div>
 
-          <div class="text-center mt-4">
-            <!-- analyze button requires auth -->
-            <button type="submit" class="analyze-btn px-5 action-auth">Analyze Machine</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- ================= MODEL-1 RESULT (always shown when present) ================= -->
-  {% if model1_result %}
-  <div class="data-input-card mb-5" id="model1ResultCard">
-    <h4 class="fw-bold mb-3">Model-1 Input Summary</h4>
-
-    <div class="table-responsive">
-      <table class="table table-bordered text-center align-middle">
-        <thead class="table-primary fw-bold">
-          <tr>
-            {% for col in model1_columns_readable %}
-            <th>{{ col }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            {% for v in model1_values %}
-            <td>{{ v }}</td>
-            {% endfor %}
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="result-card {% if model1_result.Predicted_Class == 'PASS' %}result-pass{% else %}result-fail{% endif %}">
-      <h4>Result: {{ model1_result.Predicted_Class }}</h4>
-      <p>Confidence: {{ model1_result.Confidence }}%</p>
-    </div>
-
-    <div class="text-center mt-4">
-      {% if model1_result.Predicted_Class == "FAIL" %}
-      <form method="POST" class="d-inline-block action-auth-form">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="go_model2">
-        <button class="proceed-btn action-auth">Proceed to Defect Detection</button>
-      </form>
-      {% endif %}
-
-      <form method="POST" class="d-inline-block ms-3">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="reset_all">
-        <button class="btn btn-secondary px-4">Predict Again</button>
+        <div class="text-center mt-4">
+          <button type="submit" class="analyze-btn px-5 action-auth">Analyze Machine</button>
+        </div>
       </form>
     </div>
   </div>
-  {% endif %}
+</div>
+{% endif %}
+
+<!-- ================= MODEL-1 RESULT ================= -->
+{% if model1_result %}
+<div class="data-input-card mb-5" id="model1ResultCard">
+
+  <h4 class="fw-bold mb-3">Model-1 Input Summary</h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered text-center align-middle">
+      <thead class="table-primary fw-bold">
+        <tr>
+          {% for col in model1_columns_readable %}
+          <th>{{ col }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% for v in model1_values %}
+          <td>{{ v }}</td>
+          {% endfor %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chart-wrapper">
+    <div id="model1Gauge" class="chart-small"></div>
+  </div>
+
+  <div class="result-card {% if model1_result.Predicted_Class == 'PASS' %}result-pass{% else %}result-fail{% endif %}">
+    <h4>Result: {{ model1_result.Predicted_Class }}</h4>
+    <p>Confidence: {{ model1_result.Confidence }}%</p>
+  </div>
+
+  <div class="text-center mt-4">
+    {% if model1_result.Predicted_Class == "FAIL" %}
+    <form method="POST" class="d-inline-block action-auth-form">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="go_model2">
+      <button class="proceed-btn action-auth">Proceed to Defect Detection</button>
+    </form>
+    {% endif %}
+
+    <form method="POST" class="d-inline-block ms-3">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="reset_all">
+      <button class="btn btn-secondary px-4">Predict Again</button>
+    </form>
+  </div>
+
+</div>
+{% endif %}
+  
 
   <!-- ================= MODEL-2 FORM (only shown after user hits PROCEED) ================= -->
   {% if show_model2_form and not model2_result %}
@@ -357,14 +363,21 @@
     </div>
 
     <h5 class="fw-bold mt-3">Class Probabilities</h5>
-    <div class="probability-list">
-      {% for p in model2_result.Probabilities %}
-      <div class="probability-item d-flex justify-content-between p-2 border rounded mb-2">
-        <div>{{ p.label }}</div>
-        <strong>{{ p.prob }}%</strong>
-      </div>
-      {% endfor %}
+    <div class="model2-chart-row">
+
+    <!-- PIE CHART -->
+    <div class="model2-chart-col">
+        <h6 class="model2-chart-title">Probability Distribution (Pie)</h6>
+        <canvas id="model2Pie" class="chart-medium"></canvas>
     </div>
+
+    <!-- BAR CHART -->
+    <div class="model2-chart-col">
+        <h6 class="model2-chart-title">Class Comparison (Bar)</h6>
+        <canvas id="model2Bar" class="chart-medium"></canvas>
+    </div>
+
+</div>
 
     <div class="text-center mt-4">
       <form method="POST">
@@ -381,87 +394,221 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  // === AUTH FLAG (injected by Django) ===
-  const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
-  const loginModalEl = document.getElementById('loginPopup');
-  const loginModal = new bootstrap.Modal(loginModalEl);
+    /* ===============================================================
+       AUTH + INTRO BEHAVIOR
+    =============================================================== */
+    const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
+    const loginModalEl = document.getElementById('loginPopup');
+    const loginModal = new bootstrap.Modal(loginModalEl);
 
-  // === INTRO VISIBILITY LOGIC ===
-  // localStorage key used to remember that the user has started the models.
-  // We'll only set this when an authenticated user clicks Start (so anonymous clicks don't hide intro).
-  const INTRO_KEY = "qs_intro_started_v1";
+    const INTRO_KEY = "qs_intro_started_v1";
+    const introSection = document.getElementById("introSection");
+    const model1Section = document.getElementById("model1Section");
 
-  const introSection = document.getElementById("introSection");
-  const model1Section = document.getElementById("model1Section");
+    if (localStorage.getItem(INTRO_KEY) === "yes") {
+        introSection.style.display = "none";
+        if (model1Section) model1Section.style.display = "";
+    } else {
+        introSection.style.display = "block";
+        if (model1Section) model1Section.style.display = "none";
+    }
 
-  // If localStorage says started, hide intro; else keep shown.
-  if (localStorage.getItem(INTRO_KEY) === "yes") {
-    if (introSection) introSection.style.display = "none";
-    if (model1Section) model1Section.style.display = "";
-  } else {
-    // default: show intro and hide model1 so user sees intro clearly
-    if (introSection) introSection.style.display = "block";
-    if (model1Section) model1Section.style.display = "none";
-  }
+    const startBtn = document.getElementById("startModelBtn");
+    if (startBtn) {
+        startBtn.addEventListener("click", () => {
+            if (!isAuth) {
+                loginModal.show();
+                return;
+            }
+            localStorage.setItem(INTRO_KEY, "yes");
+            introSection.style.display = "none";
+            if (model1Section) model1Section.style.display = "";
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    }
 
-  // Start button behaviour:
-  const startBtn = document.getElementById("startModelBtn");
-  if (startBtn) {
-    startBtn.addEventListener("click", () => {
-      if (!isAuth) {
-        // If not authenticated, show login popup and DO NOT hide intro
-        loginModal.show();
-        return;
-      }
-      // If authenticated: hide intro and show model1. Persist the choice so intro stays hidden.
-      localStorage.setItem(INTRO_KEY, "yes");
-      if (introSection) introSection.style.display = "none";
-      if (model1Section) model1Section.style.display = "";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    document.querySelectorAll(".action-auth").forEach(btn => {
+        btn.addEventListener("click", e => {
+            if (!isAuth) {
+                e.preventDefault();
+                loginModal.show();
+            }
+        });
     });
-  }
 
-  // If the user manually logs out from navbar, you may call localStorage.removeItem(INTRO_KEY)
-  // — optionally implement that in your logout flow.
-
-  // === BLOCK actions/forms that require auth (show login modal) ===
-  document.querySelectorAll(".action-auth").forEach(btn => {
-    btn.addEventListener("click", function(e) {
-      if (!isAuth) {
-        e.preventDefault();
-        loginModal.show();
-      }
+    document.querySelectorAll(".action-auth-form").forEach(form => {
+        form.addEventListener("submit", e => {
+            if (!isAuth) {
+                e.preventDefault();
+                loginModal.show();
+            }
+        });
     });
-  });
 
-  document.querySelectorAll(".action-auth-form").forEach(form => {
-    form.addEventListener("submit", function(e) {
-      if (!isAuth) {
-        e.preventDefault();
-        loginModal.show();
-      }
+    document.querySelectorAll(".label-wrapper").forEach(wrapper => {
+        const icon = wrapper.querySelector(".tooltip-icon");
+        const box = wrapper.querySelector(".tooltip-box");
+        if (!icon || !box) return;
+        wrapper.addEventListener("mouseenter", () => box.classList.add("visible"));
+        wrapper.addEventListener("mouseleave", () => box.classList.remove("visible"));
     });
-  });
 
-  // === TOOLTIP INTERACTIVITY ===
-  // show tooltip-box when hovering the label-wrapper
-  document.querySelectorAll(".label-wrapper").forEach(wrapper => {
-    const icon = wrapper.querySelector(".tooltip-icon");
-    const box = wrapper.querySelector(".tooltip-box");
-    if (!icon || !box) return;
-    // CSS fallback: tooltip-box should be hidden by default in CSS; we toggle 'visible' class here
-    wrapper.addEventListener("mouseenter", () => box.classList.add("visible"));
-    wrapper.addEventListener("mouseleave", () => box.classList.remove("visible"));
-    // also allow focus for keyboard users
-    icon.addEventListener("focus", () => box.classList.add("visible"));
-    icon.addEventListener("blur", () => box.classList.remove("visible"));
-  });
+
+    /* ===============================================================
+       MODEL-1 GAUGE (ApexCharts)
+    =============================================================== */
+    const gaugeValue = parseFloat({{ model1_result.Confidence|default:"0" }}) || 0;
+    const predictedClass = "{{ model1_result.Predicted_Class|default:'PASS' }}";
+    const gaugeEl = document.querySelector("#model1Gauge");
+
+    if (gaugeEl) {
+        const classColor = predictedClass === "PASS" ? "#28a745" : "#dc3545";
+        const midColor = "#ffba08";
+
+        var gaugeOptions = {
+            series: [gaugeValue],
+            chart: {
+                height: 300,
+                type: 'radialBar',
+                animations: {
+                    enabled: true,
+                    easing: 'easeinout',
+                    speed: 1500
+                }
+            },
+            plotOptions: {
+                radialBar: {
+                    startAngle: -135,
+                    endAngle: 135,
+                    hollow: { size: "60%" },
+                    track: { background: "#f2f2f2" },
+                    dataLabels: {
+                        name: {
+                            show: true,
+                            offsetY: 40,
+                            formatter: () => predictedClass,
+                            color: classColor,
+                            fontSize: "20px",
+                            fontWeight: "700"
+                        },
+                        value: {
+                            show: true,
+                            offsetY: -20,
+                            formatter: val => Math.round(val) + "%",
+                            fontSize: "28px",
+                            fontWeight: "700"
+                        }
+                    }
+                }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    colorStops: [
+                        { offset: 0, color: '#e63946', opacity: 1 },
+                        { offset: 50, color: midColor, opacity: 1 },
+                        { offset: 100, color: '#28a745', opacity: 1 }
+                    ]
+                }
+            }
+        };
+
+        new ApexCharts(gaugeEl, gaugeOptions).render();
+    }
+
+
+    /* ===============================================================
+       MODEL-2 CHARTS (Chart.js)
+    =============================================================== */
+    const labels2 = [{% for p in model2_result.Probabilities %}"{{ p.label }}",{% endfor %}];
+    const data2 = [{% for p in model2_result.Probabilities %}{{ p.prob }},{% endfor %}];
+
+    /* -------- PIE ANIMATED -------- */
+    const pieEl = document.getElementById("model2Pie");
+    if (pieEl) {
+        new Chart(pieEl, {
+            type: 'pie',
+            data: {
+                labels: labels2,
+                datasets: [{
+                    data: data2,
+                    backgroundColor: [
+                        "#4e79a7", "#f28e2b", "#e15759",
+                        "#76b7b2", "#59a14f", "#edc948",
+                        "#b07aa1", "#ff9da7"
+                    ],
+                    borderWidth: 2,
+                    borderColor: "#ffffff"
+                }]
+            },
+            options: {
+                animation: {
+                    duration: 1800,
+                    easing: "easeInOutQuart"
+                },
+                animations: {
+                    x: {
+                        duration: 1000,
+                        easing: "easeOutExpo",
+                        delay: ctx => ctx.index * 150
+                    }
+                },
+                plugins: {
+                    legend: { position: "bottom" }
+                }
+            }
+        });
+    }
+
+    /* -------- BAR ANIMATED -------- */
+    const barEl = document.getElementById("model2Bar");
+    if (barEl) {
+        new Chart(barEl, {
+            type: 'bar',
+            data: {
+                labels: labels2,
+                datasets: [{
+                    label: 'Probability (%)',
+                    data: data2,
+                    backgroundColor: "#4e79a7",
+                    borderRadius: 6,
+                    maxBarThickness: 38
+                }]
+            },
+            options: {
+                animation: {
+                    duration: 1500,
+                    easing: "easeOutElastic"
+                },
+                animations: {
+                    y: {
+                        from: 0,
+                        duration: 1400,
+                        easing: "easeOutElastic"
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 10 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
 
 });
 </script>
 {% endblock %}
+
 
 {% block footer %}{% endblock %}

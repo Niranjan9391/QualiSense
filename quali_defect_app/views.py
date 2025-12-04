@@ -4,20 +4,20 @@ from django.contrib.auth import logout
 from django.conf import settings
 from pathlib import Path
 import pandas as pd
+import numpy as np
 import joblib
 import json
-import numpy as np
 
 from .models import Model1Record, Model2Record
 
 # ============================================================
-#  MODEL PATH
+#  MODEL DIRECTORY
 # ============================================================
 BASE_ML_PATH = Path(settings.BASE_DIR) / "quali_defect_app" / "ml_model"
 
 
 # ============================================================
-#  SIGNUP VIEW
+#  SIGNUP & LOGOUT
 # ============================================================
 def signup(request):
     if request.method == "POST":
@@ -32,11 +32,11 @@ def signup(request):
 
 def logout_view(request):
     logout(request)
-    return redirect('index')
+    return redirect("index")
 
 
 # ============================================================
-#  HELPERS
+#  UTIL HELPERS
 # ============================================================
 def make_columns_values_from_dict(d, keys_order):
     cols, vals = [], []
@@ -47,7 +47,7 @@ def make_columns_values_from_dict(d, keys_order):
 
 
 # ============================================================
-#  LOAD MODEL-1
+#  MODEL-1 LOADING
 # ============================================================
 model1 = joblib.load(BASE_ML_PATH / "model1.pkl")
 scaler1 = joblib.load(BASE_ML_PATH / "model1_scaler.pkl")
@@ -64,7 +64,7 @@ MODEL1_REQUIRED = [
     "Speed_Temp_Interaction", "Normalized_Wear_Rate"
 ]
 
-MODEL1_FEATURES = MODEL1_REQUIRED[2:]  # numeric fields only
+MODEL1_FEATURES = MODEL1_REQUIRED[2:]  # numeric only
 
 MODEL1_FIELD_MAP = {
     "Machine_Level": "machine_level",
@@ -127,7 +127,7 @@ def model1_predict(manual):
 
 
 # ============================================================
-#  LOAD MODEL-2
+#  MODEL-2 LOADING
 # ============================================================
 model2 = joblib.load(BASE_ML_PATH / "model2.pkl")
 model2_scaler = joblib.load(BASE_ML_PATH / "model2_scaler.pkl")
@@ -138,7 +138,6 @@ with open(BASE_ML_PATH / "model2_feature_order.json") as f:
 
 MODEL2_FEATURES = feature_order_model2[:]
 
-# columns that were scaled during training (you told me Cooling_Pressure_Ratio wasn't scaled)
 MODEL2_SCALED_COLS = [
     "Melt_Temperature",
     "Mold_Temperature",
@@ -183,25 +182,19 @@ DEFAULT_MODEL2 = {
 #  MODEL-2 PREDICTOR
 # ============================================================
 def model2_predict(manual):
-    # Create DataFrame using the feature order used at training
+
     df = pd.DataFrame([manual], columns=MODEL2_FEATURES)
 
-    # Map dropdown
     df["Tool_Condition"] = df["Tool_Condition"].map({"Worn": 0, "Good": 1})
 
-    # Cast numeric for scaled columns
     for col in MODEL2_SCALED_COLS:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Keep cooling_pressure_ratio as-is (not scaled)
-    if "Cooling_Pressure_Ratio" in df.columns:
-        df["Cooling_Pressure_Ratio"] = pd.to_numeric(df["Cooling_Pressure_Ratio"], errors="coerce")
+    df["Cooling_Pressure_Ratio"] = pd.to_numeric(df["Cooling_Pressure_Ratio"], errors="coerce")
 
-    # Scale only the columns that were scaled during training
     df_scaled = df.copy()
     df_scaled[MODEL2_SCALED_COLS] = model2_scaler.transform(df_scaled[MODEL2_SCALED_COLS])
 
-    # Ensure order matches training order
     df_ordered = df_scaled[feature_order_model2]
 
     pred_idx = model2.predict(df_ordered)[0]
@@ -236,7 +229,7 @@ def contact(request):
 
 
 # ============================================================
-#  DATA INPUT LOGIC
+#  MAIN — DATA INPUT VIEW
 # ============================================================
 def data_input(request):
 
@@ -245,7 +238,6 @@ def data_input(request):
         "model2_features": MODEL2_FEATURES,
         "default_model1": DEFAULT_MODEL1,
         "default_model2": DEFAULT_MODEL2,
-        # restore from session if present
         "model1_result": request.session.get("model1_result"),
         "model2_result": request.session.get("model2_result"),
         "model1_user_inputs": request.session.get("model1_user_inputs"),
@@ -255,12 +247,17 @@ def data_input(request):
         "error": None,
     }
 
-    # ----------------------------------------------------------
+    # ============================================================
+    #  POST — MODEL-1 PREDICT
+    # ============================================================
     if request.method == "POST":
         action = request.POST.get("action")
 
-        # --------------- MODEL-1 PREDICT --------------------
+        # ----------------------------------------------------------
+        # MODEL-1 PREDICT
+        # ----------------------------------------------------------
         if action == "predict_model1":
+
             manual1 = {f: request.POST.get(f) for f in MODEL1_REQUIRED}
 
             if any(v in ["", None] for v in manual1.values()):
@@ -270,7 +267,6 @@ def data_input(request):
 
             result1 = model1_predict(manual1)
 
-            # save to session so we can show later (and preserve across proceed -> model2)
             request.session["model1_user_inputs"] = manual1
             request.session["model1_result"] = result1
 
@@ -281,13 +277,10 @@ def data_input(request):
             ctx["model1_columns_readable"] = cols
             ctx["model1_values"] = vals
 
-            # Persist to DB
-            mapped = {}
-            for form_key, model_key in MODEL1_FIELD_MAP.items():
-                if form_key in ["Machine_Level", "Maintenance_Indicator"]:
-                    mapped[model_key] = manual1[form_key]
-                else:
-                    mapped[model_key] = float(manual1[form_key])
+            mapped = {model_key: float(manual1[form_key])
+                      if form_key not in ["Machine_Level", "Maintenance_Indicator"]
+                      else manual1[form_key]
+                      for form_key, model_key in MODEL1_FIELD_MAP.items()}
 
             Model1Record.objects.create(
                 user=request.user if request.user.is_authenticated else None,
@@ -296,21 +289,24 @@ def data_input(request):
             )
 
             ctx["show_model1_form"] = False
-            ctx["show_model2_form"] = False
 
             return render(request, "quali_defect_app/data_input.html", ctx)
 
-        # --------------- PROCEED TO MODEL-2 --------------------
+        # ----------------------------------------------------------
+        #  GO TO MODEL-2
+        # ----------------------------------------------------------
         if action == "go_model2":
-            # keep model1 data visible and show model2 form
             ctx["model1_user_inputs"] = request.session.get("model1_user_inputs")
             ctx["model1_result"] = request.session.get("model1_result")
             ctx["show_model1_form"] = False
             ctx["show_model2_form"] = True
             return render(request, "quali_defect_app/data_input.html", ctx)
 
-        # --------------- MODEL-2 PREDICT --------------------
+        # ----------------------------------------------------------
+        # MODEL-2 PREDICT
+        # ----------------------------------------------------------
         if action == "predict_model2":
+
             manual2 = {f: request.POST.get(f) for f in MODEL2_FEATURES}
 
             if any(v in ["", None] for v in manual2.values()):
@@ -320,7 +316,6 @@ def data_input(request):
 
             result2 = model2_predict(manual2)
 
-            # Save model2 results & inputs to session
             request.session["model2_result"] = result2
             request.session["model2_user_inputs"] = manual2
 
@@ -331,20 +326,16 @@ def data_input(request):
             ctx["model2_columns_readable"] = cols2
             ctx["model2_values"] = vals2
 
-            # Persist to DB
             mapped2 = {}
             for form_key, model_key in MODEL2_FIELD_MAP.items():
-                val = manual2.get(form_key)
-                if val is None:
-                    mapped2[model_key] = None
+                value = manual2.get(form_key)
+                if form_key == "Tool_Condition":
+                    mapped2[model_key] = value
                 else:
-                    if form_key == "Tool_Condition":
-                        mapped2[model_key] = val
-                    else:
-                        try:
-                            mapped2[model_key] = float(val)
-                        except Exception:
-                            mapped2[model_key] = None
+                    try:
+                        mapped2[model_key] = float(value)
+                    except:
+                        mapped2[model_key] = None
 
             Model2Record.objects.create(
                 user=request.user if request.user.is_authenticated else None,
@@ -352,15 +343,22 @@ def data_input(request):
                 **mapped2
             )
 
-            # show both results
-            ctx["model1_user_inputs"] = request.session.get("model1_user_inputs")
-            ctx["model1_result"] = request.session.get("model1_result")
             ctx["show_model1_form"] = False
             ctx["show_model2_form"] = False
 
+            ctx["model1_user_inputs"] = request.session.get("model1_user_inputs")
+            ctx["model1_result"] = request.session.get("model1_result")
+            
+            if ctx["model1_user_inputs"]:
+                cols, vals = make_columns_values_from_dict(ctx["model1_user_inputs"], MODEL1_REQUIRED)
+                ctx["model1_columns_readable"] = cols
+                ctx["model1_values"] = vals
+
             return render(request, "quali_defect_app/data_input.html", ctx)
 
-        # --------------- RESET --------------------
+        # ----------------------------------------------------------
+        # RESET ALL
+        # ----------------------------------------------------------
         if action == "reset_all":
             request.session.pop("model1_user_inputs", None)
             request.session.pop("model1_result", None)
@@ -368,5 +366,23 @@ def data_input(request):
             request.session.pop("model2_result", None)
             return redirect("data_input")
 
-    # GET
+    # ============================================================
+    #  GET — RESTORE TABLES + RESULTS AFTER REFRESH
+    # ============================================================
+
+    # MODEL-1 TABLE RESTORE
+    if ctx["model1_user_inputs"]:
+        cols, vals = make_columns_values_from_dict(ctx["model1_user_inputs"], MODEL1_REQUIRED)
+        ctx["model1_columns_readable"] = cols
+        ctx["model1_values"] = vals
+        ctx["show_model1_form"] = False
+
+    # MODEL-2 TABLE RESTORE
+    if ctx["model2_user_inputs"]:
+        cols2, vals2 = make_columns_values_from_dict(ctx["model2_user_inputs"], MODEL2_FEATURES)
+        ctx["model2_columns_readable"] = cols2
+        ctx["model2_values"] = vals2
+        ctx["show_model1_form"] = False
+        ctx["show_model2_form"] = False
+
     return render(request, "quali_defect_app/data_input.html", ctx)
