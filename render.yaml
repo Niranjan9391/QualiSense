@@ -3,9 +3,10 @@ services:
     name: qualisense
     env: python
     plan: free
-    
-    # Standard build command
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate --noinput"
-    
-    # Standard start command
-    startCommand: "gunicorn qualisense_project.wsgi:application"
+
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate --noinput
+
+    startCommand: gunicorn qualisense_project.wsgi:application
