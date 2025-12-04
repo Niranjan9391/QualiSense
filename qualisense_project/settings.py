@@ -117,7 +117,13 @@ USE_TZ = True
 # -----------------------------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "quali_defect_app/static"),
+]
+
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 MEDIA_URL = "/media/"
