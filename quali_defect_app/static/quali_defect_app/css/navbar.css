@@ -41,27 +41,14 @@
 .animated-title span:nth-child(9) { animation-delay: 0.90s; }
 .animated-title span:nth-child(10) { animation-delay: 1.00s; }
 
-/* 
-Minimal animation:
-0–40%   → fade in
-40–70%  → stay fully visible
-70–100% → fade out quietly
-*/
 @keyframes minimalFade {
-    0% {
-        opacity: 1;
-    }
-    40% {
-        opacity: 1; /* fade in */
-    }
-    70% {
-        opacity: 1; /* stay visible */
-    }
-    100% {
-        opacity: 0; /* fade out */
-    }
+    0%, 40%, 70% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
+/* ==========================================
+      OLD PROFILE BEHAVIOR (Kept as is)
+========================================== */
 
 /* Remove nav link underline animation for Profile */
 .profile-toggle {
@@ -103,4 +90,96 @@ Minimal animation:
 /* Prevent nav shifting */
 .profile-dropdown:hover .nav-link {
     color: #fff !important;
+}
+
+
+
+/* ==================================================
+            🚀 ADDED AVATAR SYSTEM (New)
+================================================== */
+
+/* Fix shifting by giving controlled width */
+.profile-dropdown {
+    position: relative;
+    width: 48px;    /* prevents navbar shifting */
+    text-align: right;
+}
+
+/* Circular avatar replacing username */
+.profile-avatar {
+    text-decoration: none !important;
+    width: 38px;
+    height: 38px;
+    background: #4f7fff;
+    border-radius: 50%;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+/* Hover effect */
+.profile-avatar:hover {
+    background: #6b8dff;
+}
+
+/* Absolutely positioned dropdown */
+.profile-dropdown .dropdown-menu {
+    position: absolute !important;
+    top: 100%;
+    right: 0;
+    left: auto !important;
+
+    margin-top: 10px;
+    display: none;
+
+    min-width: 160px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+
+    transform: none !important;
+}
+
+/* Show dropdown on hover */
+.profile-dropdown:hover .dropdown-menu {
+    display: block !important;
+}
+
+/* Logout hover style */
+.profile-menu .dropdown-item.text-danger:hover {
+    background: #ffe9e9 !important;
+    color: #b30000 !important;
+}
+
+
+
+/* ==================================================
+            📱 MOBILE DROPDOWN FIX
+================================================== */
+@media (max-width: 991px) {
+    .profile-dropdown {
+        width: auto;
+    }
+
+    .profile-dropdown .dropdown-menu {
+        position: static !important;
+        display: block !important;
+        margin-top: 6px;
+        box-shadow: none;
+        background: transparent;
+    }
+
+    .profile-menu .dropdown-item {
+        background: #fff;
+        margin-bottom: 8px;
+        border-radius: 8px;
+    }
 }

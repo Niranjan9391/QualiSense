@@ -6,7 +6,7 @@
         <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'index' %}">
             <div class="brand-logo">
-                <img src="{% static 'quali_defect_app/images/logo.svg' %}" 
+                <img src="{% static 'quali_defect_app/images/logo.svg' %}"
                      alt="QualiSense company logo"
                      class="nav-logo">
             </div>
@@ -47,38 +47,41 @@
                        href="{% url 'contact' %}">Contact Us</a>
                 </li>
 
-                <!-- Authentication Buttons / Profile Menu -->
+                <!-- ============================
+                     PROFILE AVATAR + DROPDOWN
+                ============================ -->
                 {% if user.is_authenticated %}
+                <li class="nav-item profile-dropdown ms-3">
 
-                    <!-- PROFILE DROPDOWN -->
-                    <li class="nav-item dropdown ms-3">
-                        <a class="nav-link dropdown-toggle text-info" href="#" id="profileMenu"
-                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ user.username }}
-                        </a>
+                    <!-- Circular avatar -->
+                    <a class="profile-avatar" href="#" id="profileMenu">
+                        {{ user.username|first|upper }}
+                    </a>
 
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileMenu">
-                            <li>
-                                <a class="dropdown-item" href="{% url 'history' %}">History</a>
-                            </li>
+                    <!-- Custom dropdown -->
+                    <ul class="dropdown-menu profile-menu">
+                        <li>
+                            <a class="dropdown-item" href="{% url 'history' %}">History</a>
+                        </li>
 
-                            <li><hr class="dropdown-divider"></li>
+                        <li><hr class="dropdown-divider"></li>
 
-                            <li>
-                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
-                                    Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+
+                </li>
 
                 {% else %}
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light ms-3" href="{% url 'login' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="{% url 'signup' %}">Sign Up</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline-light ms-3" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-primary ms-2" href="{% url 'signup' %}">Sign Up</a>
+                </li>
                 {% endif %}
             </ul>
         </div>
