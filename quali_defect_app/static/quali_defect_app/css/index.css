@@ -7,9 +7,10 @@
 }
 
 .gradient-heading {
-    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 40%, #06b6d4 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    /* background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 40%, #06b6d4 100%); */
+    color:white;
+    /* -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; */
     display: inline-block;
 }
 
@@ -37,6 +38,7 @@
 }
 
 .offer-icon-box {
+    background-color: skyblue;
     padding: 35px;
     display: flex;
     align-items: center;
@@ -80,8 +82,8 @@
    INDUSTRY IMPACT SECTION
 ========================================= */
 .impact-section {
-    background: linear-gradient(135deg, #1b367a, #2a4da5);
-    color: #fff;
+    background: darkblue;
+    color: #000;
 }
 
 .glass-box {

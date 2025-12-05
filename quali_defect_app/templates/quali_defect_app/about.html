@@ -5,14 +5,12 @@
 <link rel="stylesheet" href="{% static 'quali_defect_app/css/about.css' %}">
 {% endblock %}
 
-
 {% block content %}
 
-<!-- ================= LOGIN POPUP (Shared globally) ================= -->
+<!-- LOGIN POPUP (unchanged) -->
 <div class="modal fade" id="loginPopup" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-4">
-
             <h4 class="text-center fw-bold mb-2">Login Required</h4>
             <p class="text-center text-muted mb-4">
                 Please login or create an account to access AI model features.
@@ -22,7 +20,6 @@
                 <a href="{% url 'login' %}" class="btn btn-primary px-4">Login</a>
                 <a href="{% url 'signup' %}" class="btn btn-outline-primary px-4">Sign Up</a>
             </div>
-
         </div>
     </div>
 </div>
@@ -104,16 +101,114 @@
       </div>
 
       <div class="about-cap-grid reveal">
-        <div class="about-cap-card"><span>⚙</span><h3>CNC Intelligence</h3><p>Vibration signal analysis detects early wear.</p></div>
-        <div class="about-cap-card"><span>⚡</span><h3>Welding QA</h3><p>Computer vision catches porosity & bead issues.</p></div>
-        <div class="about-cap-card"><span>🏭</span><h3>Assembly Flow</h3><p>Monitor cycle times & remove bottlenecks.</p></div>
-        <div class="about-cap-card"><span>📡</span><h3>Sensor Fusion</h3><p>Merge acoustic & thermal diagnostics.</p></div>
-        <div class="about-cap-card"><span>🔮</span><h3>Predictive Maint.</h3><p>Forecast breakdowns before they happen.</p></div>
-        <div class="about-cap-card"><span>👁</span><h3>Visual Inspection</h3><p>Automated defect detection — 99.9% accuracy.</p></div>
+        <div class="about-cap-card"><span>⚙</span><h3>Machine Health Check</h3><p>Prediction based on real-world parameters.</p></div>
+        <div class="about-cap-card"><span>⚡</span><h3>Defect Detection</h3><p>Detect the defect if machine fails to be healthy.</p></div>
+        <div class="about-cap-card"><span>🏭</span><h3>Visual Results</h3><p>Show results using visual in which user can understand easily.</p></div>
+        <div class="about-cap-card"><span>📡</span><h3>Interactive UI</h3><p>Interactive UI which makes user keep using application.</p></div>
+        <div class="about-cap-card"><span>🔮</span><h3>Security and Authentication</h3><p>Secured environment and secured data storage.</p></div>
+        <div class="about-cap-card"><span>👁</span><h3>Data Storage</h3><p>The given data in forms is stored to improve application.</p></div>
       </div>
     </div>
   </section>
+</div>
 
+
+<!-- ============================== -->
+<!-- PREMIUM FAQ SECTION (UPDATED) -->
+<!-- ============================== -->
+<div class="container">
+  <section class="faq-section" aria-labelledby="faq-heading">
+
+      <div class="faq-header-block">
+        <h2 id="faq-heading">Frequently Asked Questions</h2>
+        <span class="faq-help-text">Quick answers about QualiSense</span>
+      </div>
+
+      <div class="faq-content">
+
+        <!-- LEFT SIDEBAR -->
+        <div class="faq-category">
+
+          <div class="faq-category-title">General</div>
+
+          <details>
+            <summary>
+              How does QualiSense collect factory data?
+              <span class="faq-icon">⌄</span>
+            </summary>
+            <div class="faq-answer">
+              We gather time-series sensor data and optical images using edge-connected gateways.
+              Data is pre-processed on-device to reduce bandwidth before secure transmission.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Is installation disruptive to production?
+              <span class="faq-icon">⌄</span>
+            </summary>
+            <div class="faq-answer">
+              No — our modules are plug-and-play, using non-invasive sensors deployed between shifts.
+            </div>
+          </details>
+
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="faq-category">
+
+          <div class="faq-category-title">Technical</div>
+
+          <details>
+            <summary>
+              What ML models run at the edge?
+              <span class="faq-icon">⌄</span>
+            </summary>
+            <div class="faq-answer">
+              We run small CNNs and RNNs optimized for real-time anomaly detection and image analysis.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Can QualiSense integrate with MES/ERP?
+              <span class="faq-icon">⌄</span>
+            </summary>
+            <div class="faq-answer">
+              Yes — we support REST, MQTT, and structured KPI mapping to most enterprise systems.
+            </div>
+          </details>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="faq-category">
+
+          <div class="faq-category-title">Security & Privacy</div>
+
+          <details>
+            <summary>
+              How is factory data protected?
+              <span class="faq-icon">⌄</span>
+            </summary>
+            <div class="faq-answer">
+              TLS encryption, RBAC, and on-edge preprocessing allow secure operations with minimized exposure.
+            </div>
+          </details>
+
+          <details>
+            <summary>
+              Do you store raw images off-site?
+              <span class="faq-icon">⌄</span>
+            </summary>
+            <div class="faq-answer">
+              We store metadata by default; raw images are stored only when explicitly required.
+            </div>
+          </details>
+
+        </div>
+
+      </div>
+  </section>
 </div>
 
 {% endblock %}

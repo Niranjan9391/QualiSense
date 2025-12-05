@@ -45,7 +45,7 @@
 
         <div class="d-flex gap-3 mt-4">
           <!-- IMPORTANT: "startModelBtn" drives intro behaviour -->
-          <button id="startModelBtn" class="try-model-btn action-auth">🚀 Try Our AI Model</button>
+          <button id="startModelBtn" class="try-model-btn action-auth">Try Our AI Model</button>
           <button id="introLearnMore" class="btn btn-outline-secondary">Learn How It Works</button>
         </div>
       </div>
@@ -90,11 +90,11 @@
       <h4>How the dual-phase system works</h4>
       <div class="intro-steps-grid">
         <div>
-          <h6>Step 1 — Machine Health (Model-1)</h6>
+          <h6>Step 1 — Machine Health</h6>
           <p>Reads operational data & classifies conditions as PASS or FAIL.</p>
         </div>
         <div>
-          <h6>Step 2 — Defect Analysis (Model-2)</h6>
+          <h6>Step 2 — Defect Analysis</h6>
           <p>If FAIL, a second model predicts the defect & probabilities.</p>
         </div>
       </div>
@@ -172,8 +172,8 @@
                 <div class="tooltip-line">Unit: min</div>
                 <div class="tooltip-line">Range: 0–300</div>
                 {% else %}
-                <div class="tooltip-line">Unit: —</div>
-                <div class="tooltip-line">Range: —</div>
+                <div class="tooltip-line">Unit: </div>
+                <div class="tooltip-line">Range: </div>
                 {% endif %}
               </div>
             </div>
@@ -189,7 +189,7 @@
         </div>
 
         <div class="text-center mt-4">
-          <button type="submit" class="analyze-btn px-5 action-auth">Analyze Machine</button>
+          <button type="submit" class="analyze-btn px-5 action-auth">Check Health</button>
         </div>
       </form>
     </div>
@@ -201,7 +201,7 @@
 {% if model1_result %}
 <div class="data-input-card mb-5" id="model1ResultCard">
 
-  <h4 class="fw-bold mb-3">Model-1 Input Summary</h4>
+  <h4 class="fw-bold mb-3">Machine Health Input Summary</h4>
 
   <div class="table-responsive">
     <table class="table table-bordered text-center align-middle">
@@ -267,7 +267,7 @@
           {% csrf_token %}
           <input type="hidden" name="action" value="predict_model2">
 
-          <h4 class="fw-bold mb-3">Enter Model-2 Inputs</h4>
+          <h4 class="fw-bold mb-3">Enter Further details</h4>
           <div class="row g-4">
             <div class="col-md-6">
               <label class="form-label">Tool Condition</label>
@@ -307,8 +307,8 @@
                     <div class="tooltip-line">Unit: years</div>
                     <div class="tooltip-line">Range: 0–20</div>
                   {% else %}
-                    <div class="tooltip-line">Unit: —</div>
-                    <div class="tooltip-line">Range: —</div>
+                    <div class="tooltip-line">Unit: </div>
+                    <div class="tooltip-line">Range: </div>
                   {% endif %}
                 </div>
               </div>
@@ -336,7 +336,7 @@
   <!-- ================= MODEL-2 RESULT (shows when model2_result exists) ================= -->
   {% if model2_result %}
   <div class="data-input-card mb-5" id="model2ResultCard">
-    <h4 class="fw-bold mt-4 mb-3">Model-2 Input Summary</h4>
+    <h4 class="fw-bold mt-4 mb-3">Defect Detection Input Summary</h4>
 
     <div class="table-responsive">
       <table class="table table-bordered text-center">

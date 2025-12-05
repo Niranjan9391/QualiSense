@@ -8,6 +8,8 @@ import numpy as np
 import joblib
 import json
 
+from .models import ContactMessage
+from django.contrib import messages
 from .models import Model1Record, Model2Record
 
 # ============================================================
@@ -386,3 +388,27 @@ def data_input(request):
         ctx["show_model2_form"] = False
 
     return render(request, "quali_defect_app/data_input.html", ctx)
+
+
+def contact_view(request):
+    success = False
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        mobile = request.POST.get("mobile")
+        message_text = request.POST.get("message")
+
+        if request.user.is_authenticated:
+            ContactMessage.objects.create(
+                user=request.user,
+                name=name,
+                email=email,
+                mobile=mobile,
+                message=message_text
+            )
+            success = True
+
+        return render(request, 'quali_defect_app/contact.html', {"success": success})
+
+    return render(request, 'quali_defect_app/contact.html')
