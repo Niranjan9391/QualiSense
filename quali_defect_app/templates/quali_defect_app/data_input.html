@@ -46,7 +46,9 @@
         <div class="d-flex gap-3 mt-4">
           <!-- IMPORTANT: "startModelBtn" drives intro behaviour -->
           <button id="startModelBtn" class="try-model-btn action-auth">Try Our AI Model</button>
-          <button id="introLearnMore" class="btn btn-outline-secondary">Learn How It Works</button>
+          <button class="demo-video-btn" data-bs-toggle="modal" data-bs-target="#demoVideoModal">
+    ▶ Watch Demo Video
+</button>
         </div>
       </div>
 
@@ -57,7 +59,7 @@
               <img src="{% static 'quali_defect_app/images/Production_Line.png' %}" alt="" class="intro-illustration">
               <div>
                 <h5>Production Line Overview</h5>
-                <p>Core readings — temp, speed, torque, wear — evaluated by Model-1.</p>
+                <p>Core readings — temp, speed, torque, wear — evaluated by Machine Health Model.</p>
               </div>
             </div>
           </div>
@@ -391,6 +393,27 @@
 
 </div>
 
+<!-- ================= VIDEO MODAL ================= -->
+<div class="modal fade" id="demoVideoModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content demo-video-modal">
+
+      <!-- Close Button -->
+      <button type="button" class="demo-video-close" data-bs-dismiss="modal">✕</button>
+
+      <!-- Video Container -->
+      <div class="demo-video-wrapper">
+        <video id="demoVideoPlayer" class="demo-video" muted playsinline controls>
+          <source src="{% static 'quali_defect_app/video/sample_video.mp4' %}" type="video/mp4">
+        </video>
+      </div>  
+
+    </div>
+  </div>
+</div>
+
+
+
 {% endblock %}
 
 {% block extra_js %}
@@ -607,6 +630,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+
+
+/* ===============================================================
+   NEW DEMO VIDEO POPUP — Auto play + Auto pause
+=============================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const videoModal = document.getElementById("demoVideoModal");
+    const videoPlayer = document.getElementById("demoVideoPlayer");
+
+    // Play automatically when modal opens
+    videoModal.addEventListener("shown.bs.modal", function () {
+        videoPlayer.currentTime = 0;
+        videoPlayer.play();
+    });
+
+    // Pause when modal closes
+    videoModal.addEventListener("hidden.bs.modal", function () {
+        videoPlayer.pause();
+    });
+});
+
+
+
 </script>
 {% endblock %}
 
