@@ -47,15 +47,31 @@
                        href="{% url 'contact' %}">Contact Us</a>
                 </li>
 
-                <!-- Authentication Buttons -->
+                <!-- Authentication Buttons / Profile Menu -->
                 {% if user.is_authenticated %}
-                    <li class="nav-item ms-3">
-                        <span class="nav-link text-info">Hi, {{ user.username }}</span>
+
+                    <!-- PROFILE DROPDOWN -->
+                    <li class="nav-item dropdown ms-3">
+                        <a class="nav-link dropdown-toggle text-info" href="#" id="profileMenu"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ user.username }}
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileMenu">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'history' %}">History</a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="btn btn-outline-light ms-2" href="{% url 'logout' %}">Logout</a>
-                    </li>
                 {% else %}
                     <li class="nav-item">
                         <a class="btn btn-outline-light ms-3" href="{% url 'login' %}">Login</a>

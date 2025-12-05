@@ -1,0 +1,241 @@
+{% extends 'quali_defect_app/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'quali_defect_app/css/history.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4 history-container">
+
+    <h2 class="text-center mb-4 fw-bold">Your Prediction History</h2>
+
+    <div class="row g-4">
+
+        <!-- ==========================
+             MODEL 1 HISTORY CARD
+        =========================== -->
+        <div class="col-lg-6">
+            <div class="history-card card shadow-sm h-100">
+                
+                <div class="card-header history-header-1">
+                    <div class="card-header history-header-1 d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Machine Health History</h5>
+
+    <a href="{% url 'export_model1_excel' %}" class="download-btn">Download Excel</a>
+</div>
+                </div>
+
+                <div class="card-body history-scroll">
+
+                    <table class="table table-sm history-table">
+                        <thead class="table-light sticky-header">
+                            <tr>
+                                <th>Date</th>
+                                <th>Prediction</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for item in model1_history %}
+                            <tr>
+                                <td>{{ item.timestamp|date:"Y-m-d H:i" }}</td>
+
+                                <td>
+                                    {% if item.predicted_class == "PASS" %}
+                                        <span class="status-pass">{{ item.predicted_class }}</span>
+                                    {% else %}
+                                        <span class="status-fail">{{ item.predicted_class }}</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <button class="view-details-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#model1Modal{{ item.id }}">
+                                        View Details
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- MODEL 1 MODAL -->
+                            <div class="modal fade" id="model1Modal{{ item.id }}" tabindex="-1">
+                              <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content premium-modal">
+
+                                  <div class="modal-header premium-header-1">
+                                    <h5 class="modal-title">Model-1 Prediction Details</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                  </div>
+
+                                  <div class="modal-body premium-body">
+
+                                    <div class="summary-box">
+                                        <h6>Prediction Summary</h6>
+                                        <p>
+                                            <strong>Prediction:</strong>
+                                            {% if item.predicted_class == "PASS" %}
+                                                <span class="status-pass">{{ item.predicted_class }}</span>
+                                            {% else %}
+                                                <span class="status-fail">{{ item.predicted_class }}</span>
+                                            {% endif %}
+                                        </p>
+                                        <p><strong>Machine Level:</strong> {{ item.machine_level }}</p>
+                                        <p><strong>Maintenance:</strong> {{ item.maintenance_indicator }}</p>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="details-grid">
+                                        <div>
+                                            <p>Air Temp: {{ item.air_temperature_kelvin }}</p>
+                                            <p>Process Temp: {{ item.process_temperature_kelvin }}</p>
+                                            <p>Rotational Speed: {{ item.rotational_speed_rpm }}</p>
+                                            <p>Torque: {{ item.torque_nm }}</p>
+                                            <p>Tool Wear: {{ item.tool_wear_min }}</p>
+                                            <p>Temp Difference: {{ item.temp_difference }}</p>
+                                        </div>
+
+                                        <div>
+                                            <p>Speed/Torque Ratio: {{ item.speed_torque_ratio }}</p>
+                                            <p>Wear Rate: {{ item.wear_rate }}</p>
+                                            <p>Energy Index: {{ item.energy_index }}</p>
+                                            <p>Thermal Stress: {{ item.thermal_stress_index }}</p>
+                                            <p>Torque-Wear Product: {{ item.torque_wear_product }}</p>
+                                            <p>Speed-Temp Interaction: {{ item.speed_temp_interaction }}</p>
+                                            <p>Normalized Wear Rate: {{ item.normalized_wear_rate }}</p>
+                                        </div>
+                                    </div>
+
+                                  </div>
+
+                                  <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">No Machine Health history yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==========================
+             MODEL 2 HISTORY CARD
+        =========================== -->
+        <div class="col-lg-6">
+            <div class="history-card card shadow-sm h-100">
+
+                <div class="card-header history-header-2">
+                    <div class="card-header history-header-2 d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">Defect Detection History</h5>
+
+    <a href="{% url 'export_model2_excel' %}" class="download-btn">Download Excel</a>
+</div>
+
+                </div>
+
+                <div class="card-body history-scroll">
+
+                    <table class="table table-sm history-table">
+                        <thead class="table-light sticky-header">
+                            <tr>
+                                <th>Date</th>
+                                <th>Prediction</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for item in model2_history %}
+                            <tr>
+                                <td>{{ item.timestamp|date:"Y-m-d H:i" }}</td>
+                                <td class="fw-bold">{{ item.predicted_defect }}</td>
+
+                                <td>
+                                    <button class="view-details-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#model2Modal{{ item.id }}">
+                                        View Details
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- MODEL 2 MODAL -->
+                            <div class="modal fade" id="model2Modal{{ item.id }}" tabindex="-1">
+                              <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content premium-modal">
+
+                                  <div class="modal-header premium-header-2">
+                                    <h5 class="modal-title">Model-2 Prediction Details</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                  </div>
+
+                                  <div class="modal-body premium-body">
+
+                                    <div class="summary-box">
+                                        <h6>Prediction Summary</h6>
+                                        <p><strong>Prediction:</strong> {{ item.predicted_defect }}</p>
+                                        <p><strong>Tool Condition:</strong> {{ item.tool_condition }}</p>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="details-grid">
+                                        <div>
+                                            <p>Melt Temp: {{ item.melt_temperature }}</p>
+                                            <p>Mold Temp: {{ item.mold_temperature }}</p>
+                                            <p>Casting Pressure: {{ item.casting_pressure }}</p>
+                                            <p>Cooling Time: {{ item.cooling_time }}</p>
+                                        </div>
+
+                                        <div>
+                                            <p>Flow Rate: {{ item.flow_rate }}</p>
+                                            <p>Humidity: {{ item.ambient_humidity }}</p>
+                                            <p>Operator Experience: {{ item.operator_experience }}</p>
+                                            <p>Temp Diff: {{ item.temp_diff }}</p>
+                                            <p>Cooling Pressure Ratio: {{ item.cooling_pressure_ratio }}</p>
+                                            <p>Flow Temp Product: {{ item.flow_temp_product }}</p>
+                                        </div>
+                                    </div>
+
+                                  </div>
+
+                                  <div class="modal-footer">
+                                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">No Defect Detection history yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+{% block footer %}{% endblock %}

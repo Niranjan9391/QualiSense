@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from django.utils.timezone import make_naive
 from django.contrib.auth import logout
 from django.conf import settings
 from pathlib import Path
@@ -412,3 +415,72 @@ def contact_view(request):
         return render(request, 'quali_defect_app/contact.html', {"success": success})
 
     return render(request, 'quali_defect_app/contact.html')
+
+
+@login_required
+def history_view(request):
+    model1_history = Model1Record.objects.filter(
+        user=request.user
+    ).order_by('-timestamp')
+
+    model2_history = Model2Record.objects.filter(
+        user=request.user
+    ).order_by('-timestamp')
+
+    return render(request, "quali_defect_app/history.html", {
+        "model1_history": model1_history,
+        "model2_history": model2_history,
+    })
+    
+    
+
+def export_model1_excel(request):
+    records = Model1Record.objects.filter(user=request.user).order_by('-timestamp')
+
+    # Convert QuerySet → List of dicts
+    data = []
+    for r in records:
+        row = vars(r).copy()
+        row.pop('_state', None)
+
+        # Convert timezone-aware timestamps to naive
+        if r.timestamp:
+            row['timestamp'] = make_naive(r.timestamp)
+
+        data.append(row)
+
+    df = pd.DataFrame(data)
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response['Content-Disposition'] = 'attachment; filename=\"model1_history.xlsx\"'
+
+    df.to_excel(response, index=False)
+    return response
+
+
+
+def export_model2_excel(request):
+    records = Model2Record.objects.filter(user=request.user).order_by('-timestamp')
+
+    data = []
+    for r in records:
+        row = vars(r).copy()
+        row.pop('_state', None)
+
+        if r.timestamp:
+            row['timestamp'] = make_naive(r.timestamp)
+
+        data.append(row)
+
+    df = pd.DataFrame(data)
+
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response['Content-Disposition'] = 'attachment; filename=\"model2_history.xlsx\"'
+
+    df.to_excel(response, index=False)
+    return response
+

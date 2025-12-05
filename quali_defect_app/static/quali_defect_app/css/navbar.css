@@ -61,3 +61,46 @@ Minimal animation:
         opacity: 0; /* fade out */
     }
 }
+
+
+/* Remove nav link underline animation for Profile */
+.profile-toggle {
+    position: relative;
+    padding-right: 6px;
+    cursor: pointer;
+}
+
+/* Disable underline animation */
+.profile-toggle::after {
+    display: none !important;
+}
+
+/* Dropdown styling */
+.profile-menu {
+    border-radius: 10px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 6px 0;
+    min-width: 150px;
+}
+
+/* Dropdown item styling */
+.profile-menu .dropdown-item {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    transition: 0.2s;
+}
+
+.profile-menu .dropdown-item:hover {
+    background-color: #eef3ff;
+}
+
+/* Hover-to-open dropdown (desktop behavior) */
+.profile-dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
+/* Prevent nav shifting */
+.profile-dropdown:hover .nav-link {
+    color: #fff !important;
+}
