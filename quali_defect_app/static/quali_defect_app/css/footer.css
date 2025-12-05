@@ -31,6 +31,10 @@
         position: relative;
     }
 
+    .footer-header {
+        font-size: 25px;
+    }
+
     .footer-link:hover {
         color: #ffc107;
         text-decoration: none;
