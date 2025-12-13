@@ -8,36 +8,33 @@
 {% block content %}
 
 <div class="qs-auth-container">
-
     <div class="qs-auth-card">
 
         <h1 class="qs-auth-title">Welcome Back</h1>
         <p class="qs-auth-subtitle">Login to continue to QualiSense</p>
 
-        {% if form.errors %}
-        <div class="alert alert-danger p-2 text-center">
-            Invalid username or password
-        </div>
-        {% endif %}
+        <!-- ERROR BOX -->
+        <div id="loginErrorBox" class="alert alert-danger text-center d-none"></div>
 
-        <form method="post" action="{% url 'login' %}?next={{ request.GET.next }}">
-            {% csrf_token %}
+        <!-- EMAIL LOGIN FORM -->
+        <form id="firebaseLoginForm">
 
             <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control"
-                    placeholder="Enter your username" required>
+                <label class="form-label">Email</label>
+                <input id="loginEmail" type="email" class="form-control"
+                       placeholder="Enter your email" required>
             </div>
 
             <div class="mb-3 position-relative">
                 <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" id="loginPassword"
+                <input type="password" id="loginPassword" class="form-control"
                        placeholder="Enter your password" required>
 
-                <i class="bi bi-eye password-toggle" onclick="
-                    const p = document.getElementById('loginPassword');
-                    p.type = p.type === 'password' ? 'text' : 'password';
-                "></i>
+                <i class="bi bi-eye password-toggle"
+                   onclick="
+                        const p = document.getElementById('loginPassword');
+                        p.type = p.type === 'password' ? 'text' : 'password';
+                   "></i>
             </div>
 
             <button type="submit" class="btn btn-primary w-100 mt-2">
@@ -51,6 +48,72 @@
 
     </div>
 </div>
+
+
+<!-- ========================================================= -->
+<!-- 🔥 FIXED FIREBASE LOGIN -->
+<!-- ========================================================= -->
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+        getAuth,
+        signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBPjTIFC8czCOm_q6wxSCRH3RkbXQ543gg",
+        authDomain: "qualisense-7ee06.firebaseapp.com",
+        projectId: "qualisense-7ee06"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    function showLoginError(msg) {
+        const box = document.getElementById("loginErrorBox");
+        box.classList.remove("d-none");
+        box.innerText = msg;
+    }
+
+    function sendToDjango(uid, token) {
+        fetch("{% url 'session_login' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ uid: uid, token: token })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "ok") {
+                window.location.href = "{% url 'index' %}";
+            } else {
+                showLoginError("Session creation failed.");
+            }
+        });
+    }
+
+    document.getElementById("firebaseLoginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        signInWithEmailAndPassword(auth, email, password)
+            .then(async result => {
+                const uid = result.user.uid;
+                const token = await result.user.getIdToken();  // 🔥 FIXED
+
+                sendToDjango(uid, token);
+            })
+            .catch(err => {
+                showLoginError(err.message);
+            });
+    });
+
+</script>
 
 {% endblock %}
 {% block footer %}{% endblock %}

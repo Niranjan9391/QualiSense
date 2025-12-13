@@ -1,0 +1,187 @@
+{% extends 'quali_defect_app/base.html' %}
+{% load static %}
+
+{% block title %}Our Plans | QualiSense{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: #f4f7fb;
+    }
+    .pricing-header {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 30px;
+    }
+    .pricing-header h1 {
+        font-size: 42px;
+        font-weight: 700;
+        color: #1e2a47;
+    }
+    .pricing-header p {
+        color: #555;
+    }
+
+    .plan-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        transition: transform .2s, box-shadow .2s;
+    }
+    .plan-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+    }
+
+    .plan-title {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #1e2a47;
+    }
+    .price {
+        font-size: 36px;
+        font-weight: 700;
+        color: #007bff;
+    }
+    .credits {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+
+    .buy-btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+    .disabled-btn {
+        background: #adb5bd !important;
+        border: none !important;
+        cursor: not-allowed;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="pricing-header">
+        <h1>Choose Your Plan</h1>
+        <p>Upgrade your AI prediction limits with QualiSense</p>
+    </div>
+
+    <!-- PRICING CARDS -->
+    <div class="row justify-content-center g-4">
+
+        <!-- Starter Plan -->
+        <div class="col-md-4">
+            <div class="plan-card text-center">
+                <h2 class="plan-title">Starter</h2>
+                <p class="price">₹49</p>
+                <p class="credits">10 Predictions</p>
+
+                {% if request.session.firebase_uid %}
+                    <button class="btn btn-primary buy-btn" onclick="buyPlan('starter')">
+                        Buy Now
+                    </button>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-secondary buy-btn disabled-btn">
+                        Login to Purchase
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Standard Plan -->
+        <div class="col-md-4">
+            <div class="plan-card text-center">
+                <h2 class="plan-title">Standard</h2>
+                <p class="price">₹199</p>
+                <p class="credits">60 Predictions</p>
+
+                {% if request.session.firebase_uid %}
+                    <button class="btn btn-primary buy-btn" onclick="buyPlan('standard')">
+                        Buy Now
+                    </button>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-secondary buy-btn disabled-btn">
+                        Login to Purchase
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Professional Plan -->
+        <div class="col-md-4">
+            <div class="plan-card text-center">
+                <h2 class="plan-title">Professional</h2>
+                <p class="price">₹499</p>
+                <p class="credits">250 Predictions</p>
+
+                {% if request.session.firebase_uid %}
+                    <button class="btn btn-primary buy-btn" onclick="buyPlan('professional')">
+                        Buy Now
+                    </button>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-secondary buy-btn disabled-btn">
+                        Login to Purchase
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function buyPlan(plan) {
+    fetch("/create-order/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ plan: plan })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        var options = {
+            "key": data.key,
+            "amount": data.amount,
+            "currency": "INR",
+            "name": "QualiSense",
+            "description": plan.toUpperCase() + " Plan Purchase",
+            "order_id": data.order_id,
+
+            "handler": function (response) {
+                fetch("/payment-success/", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        plan: plan,
+                        payment: response
+                    })
+                })
+                .then(() => {
+                    alert("Payment Successful!");
+                    window.location.href = "{% url 'data_input' %}";
+                });
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+    });
+}
+</script>
+{% endblock %}
+{% block footer %}
+<!-- No footer for pricing page -->
+{% endblock %}

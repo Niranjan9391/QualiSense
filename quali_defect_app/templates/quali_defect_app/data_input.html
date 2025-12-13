@@ -10,12 +10,13 @@
 
 {% block content %}
 
-<!-- LOGIN POPUP -->
+<!-- ================= LOGIN POPUP ================= -->
 <div class="modal fade" id="loginPopup" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content p-4">
       <h4 class="text-center fw-bold mb-2">Login Required</h4>
-      <p class="text-center text-muted mb-4">Please login or create an account to use our AI Models.</p>
+      <p class="text-center text-muted mb-4">Please login or create an account to continue.</p>
+
       <div class="d-flex justify-content-around mb-3">
         <a href="{% url 'login' %}?next={% url 'data_input' %}" class="btn btn-primary px-4">Login</a>
         <a href="{% url 'signup' %}?next={% url 'data_input' %}" class="btn btn-outline-primary px-4">Sign Up</a>
@@ -24,62 +25,83 @@
   </div>
 </div>
 
-<div class="container py-5">
-  <h2 class="page-title text-center mb-4">Our Model</h2>
+<!-- ===================== PAYMENT POPUP ===================== -->
+<div class="modal fade" id="paymentPopup" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4">
 
-  <!-- INTRO SECTION: visible until user clicks START (localStorage controlled) -->
+      <h4 class="text-center fw-bold mb-2">Prediction Limit Reached</h4>
+      <p class="text-center text-muted mb-4">
+        You have used all available prediction credits.<br>
+        Please upgrade your plan to continue.
+      </p>
+
+      <div class="d-flex justify-content-around mb-3">
+        <a href="{% url 'pricing_page' %}" class="btn btn-primary px-4">View Plans</a>
+        <button class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="container py-5">
+  <h2 class="page-title text-center mb-4">Our AI Model</h2>
+
+  <!-- ================= INTRO SECTION ================= -->
   <section id="introSection" class="data-input-card mb-5 animate-fade">
+
     <div class="row align-items-center gx-5">
       <div class="col-lg-6 mb-4">
         <h1 class="intro-title">AI-Powered Manufacturing Intelligence</h1>
         <p class="intro-subtitle">
-          Experience next-generation machine health assessment and defect prediction. Our dual-phase AI
-          evaluates equipment condition, warns of risks, and — if needed — identifies the defect with
-          corrective guidance. No technical expertise required.
+          Predict machine failures early and detect defects instantly.
         </p>
+
         <ul class="intro-list">
-          <li>Simple machine readings from the shop floor</li>
-          <li>Clear PASS/FAIL output with confidence score</li>
-          <li>Automatic defect classification when failure detected</li>
+          <li>Simple machine readings</li>
+          <li>PASS/FAIL output with confidence</li>
+          <li>Automatic defect classification</li>
         </ul>
 
         <div class="d-flex gap-3 mt-4">
-          <!-- IMPORTANT: "startModelBtn" drives intro behaviour -->
-          <button id="startModelBtn" class="try-model-btn action-auth">Try Our AI Model</button>
+          <button id="startModelBtn" class="try-model-btn auth-check">Try Our AI Model</button>
           <button class="demo-video-btn" data-bs-toggle="modal" data-bs-target="#demoVideoModal">
-    ▶ Watch Demo Video
-</button>
+            ▶ Watch Demo Video
+          </button>
         </div>
       </div>
 
       <div class="col-lg-6">
         <div class="row g-3">
+
           <div class="col-12">
             <div class="intro-info-card">
-              <img src="{% static 'quali_defect_app/images/Production_Line.png' %}" alt="" class="intro-illustration">
+              <img src="{% static 'quali_defect_app/images/Production_Line.png' %}" class="intro-illustration">
               <div>
                 <h5>Production Line Overview</h5>
-                <p>Core readings — temp, speed, torque, wear — evaluated by Machine Health Model.</p>
+                <p>Reads essential shop-floor data.</p>
               </div>
             </div>
           </div>
 
           <div class="col-12">
             <div class="intro-info-card">
-              <img src="{% static 'quali_defect_app/images/Automation_Monitoring.png' %}" alt="" class="intro-illustration">
+              <img src="{% static 'quali_defect_app/images/Automation_Monitoring.png' %}" class="intro-illustration">
               <div>
                 <h5>Automation & Sensors</h5>
-                <p>Detects abnormal trends using real-time industrial signals.</p>
+                <p>Detects anomalies in real time.</p>
               </div>
             </div>
           </div>
 
           <div class="col-12">
             <div class="intro-info-card">
-              <img src="{% static 'quali_defect_app/images/Quality_Inspection.png' %}" alt="" class="intro-illustration">
+              <img src="{% static 'quali_defect_app/images/Quality_Inspection.png' %}" class="intro-illustration">
               <div>
                 <h5>Quality Inspection</h5>
-                <p>AI identifies defect type & suggests corrective actions.</p>
+                <p>AI identifies exact defect types.</p>
               </div>
             </div>
           </div>
@@ -89,25 +111,19 @@
     </div>
 
     <div class="intro-flow-card mt-4">
-      <h4>How the dual-phase system works</h4>
+      <h4>How the Dual System Works</h4>
       <div class="intro-steps-grid">
         <div>
           <h6>Step 1 — Machine Health</h6>
-          <p>Reads operational data & classifies conditions as PASS or FAIL.</p>
+          <p>Predict PASS/FAIL from machine readings.</p>
         </div>
         <div>
           <h6>Step 2 — Defect Analysis</h6>
-          <p>If FAIL, a second model predicts the defect & probabilities.</p>
+          <p>If FAIL → classify defect type.</p>
         </div>
       </div>
-
-      <details class="intro-details">
-        <summary>What inputs do we use?</summary>
-        <div class="mt-2">
-          Includes temperatures, rpm, torque, tool wear, pressure, cooling time, flow rate & computed ratios — all shown clearly in the forms with tooltips.
-        </div>
-      </details>
     </div>
+
   </section>
 
   {% if error %}
@@ -115,24 +131,24 @@
   {% endif %}
 
   <!-- ================= MODEL-1 FORM ================= -->
-{% if show_model1_form %}
-<div class="data-input-card mb-5" id="model1Section">
+  {% if show_model1_form %}
+<div id="model1Section" class="data-input-card mb-5">
   <div class="row">
+
     <div class="col-md-5 p-4 border-end">
       <h3 class="model-left-title">Machine Health Check</h3>
-      <div class="model-image-wrapper">
-        <img src="{% static 'quali_defect_app/images/model1_left.png' %}" class="model-left-image">
-      </div>
+      <img src="{% static 'quali_defect_app/images/model1_left.png' %}" class="model-left-image">
     </div>
 
     <div class="col-md-7 p-4">
-      <form method="POST" class="action-auth-form">
+      <form method="POST" class="auth-form">
         {% csrf_token %}
         <input type="hidden" name="action" value="predict_model1">
 
         <h4 class="fw-bold mb-3">Enter Machine Configurations</h4>
 
         <div class="row g-4">
+
           <div class="col-md-6">
             <label class="form-label">Machine Level</label>
             <select name="Machine_Level" class="form-select form-select-lg">
@@ -150,127 +166,115 @@
             </select>
           </div>
 
-          {% for field in features %}
+          {% for field in model1_user_fields %}
           <div class="col-md-6">
-            <div class="label-wrapper">
-              <label class="form-label">{{ field }}</label>
-              <span class="tooltip-icon">i</span>
-
-              <div class="tooltip-box">
-                <div class="tooltip-title">Suggestion</div>
-                {% if field == "Air_Temperature(Kelvin)" %}
-                <div class="tooltip-line">Unit: Kelvin</div>
-                <div class="tooltip-line">Range: 290–330</div>
-                {% elif field == "Process_Temperature(Kelvin)" %}
-                <div class="tooltip-line">Unit: Kelvin</div>
-                <div class="tooltip-line">Range: 320–500</div>
-                {% elif field == "Rotational_Speed(rpm)" %}
-                <div class="tooltip-line">Unit: rpm</div>
-                <div class="tooltip-line">Range: 800–6000</div>
-                {% elif field == "Torque(Nm)" %}
-                <div class="tooltip-line">Unit: Nm</div>
-                <div class="tooltip-line">Range: 10–90</div>
-                {% elif field == "Tool_Wear(min)" %}
-                <div class="tooltip-line">Unit: min</div>
-                <div class="tooltip-line">Range: 0–300</div>
-                {% else %}
-                <div class="tooltip-line">Unit: </div>
-                <div class="tooltip-line">Range: </div>
-                {% endif %}
-              </div>
-            </div>
-
-            <input
-              type="number"
-              step="any"
-              class="form-control form-control-lg"
-              name="{{ field }}"
-              value="{{ default_model1|get_item:field }}">
+            <label class="form-label">{{ field }}</label>
+            <input type="number"
+                   step="any"
+                   name="{{ field }}"
+                   value="{{ default_model1|get_item:field }}"
+                   class="form-control form-control-lg"
+                   required>
           </div>
           {% endfor %}
+
         </div>
 
         <div class="text-center mt-4">
-          <button type="submit" class="analyze-btn px-5 action-auth">Check Health</button>
+          <button type="submit" class="analyze-btn px-5 auth-check">Check Health</button>
         </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endif %}
+
+  <!-- ================= MODEL-1 RESULT ================= -->
+  {% if model1_result %}
+  <div class="data-input-card mb-5" id="model1ResultCard">
+
+    <h4 class="fw-bold mb-3">Machine Health Input Summary</h4>
+
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead class="table-primary fw-bold">
+          <tr>
+            {% for col in model1_columns_readable %}
+              <th>{{ col }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for v in model1_values %}
+              <td>{{ v }}</td>
+            {% endfor %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="result-card {% if model1_result.Predicted_Class == 'PASS' %}result-pass{% else %}result-fail{% endif %}">
+      <h4>Result: {{ model1_result.Predicted_Class }}</h4>
+      <p>Confidence: {{ model1_result.Confidence }}%</p>
+    </div>
+
+    {% if model1_recommendations %}
+    <div class="recommendation-card mt-4 p-3 bg-light border rounded">
+      <h5 class="fw-bold mb-2">Recommended Adjustments</h5>
+
+      <ul class="list-group">
+        {% for key, text in model1_recommendations.items %}
+          <li class="list-group-item">{{ text }}</li>
+        {% endfor %}
+      </ul>
+
+      <p class="mt-3">
+        <strong>Failure Probability Reduction:</strong>
+        {{ model1_failure_reduction }}%
+      </p>
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-4">
+      {% if model1_result.Predicted_Class == "FAIL" %}
+      <form method="POST" class="d-inline-block">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="go_model2">
+        <button class="proceed-btn auth-check">Proceed to Defect Detection</button>
+      </form>
+      {% endif %}
+
+      <form method="POST" class="d-inline-block ms-3 auth-form">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="reset_all">
+        <button class="btn btn-secondary px-4 auth-check">Predict Again</button>
       </form>
     </div>
   </div>
-</div>
 {% endif %}
 
-<!-- ================= MODEL-1 RESULT ================= -->
-{% if model1_result %}
-<div class="data-input-card mb-5" id="model1ResultCard">
-
-  <h4 class="fw-bold mb-3">Machine Health Input Summary</h4>
-
-  <div class="table-responsive">
-    <table class="table table-bordered text-center align-middle">
-      <thead class="table-primary fw-bold">
-        <tr>
-          {% for col in model1_columns_readable %}
-          <th>{{ col }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          {% for v in model1_values %}
-          <td>{{ v }}</td>
-          {% endfor %}
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="chart-wrapper">
-    <div id="model1Gauge" class="chart-small"></div>
-  </div>
-
-  <div class="result-card {% if model1_result.Predicted_Class == 'PASS' %}result-pass{% else %}result-fail{% endif %}">
-    <h4>Result: {{ model1_result.Predicted_Class }}</h4>
-    <p>Confidence: {{ model1_result.Confidence }}%</p>
-  </div>
-
-  <div class="text-center mt-4">
-    {% if model1_result.Predicted_Class == "FAIL" %}
-    <form method="POST" class="d-inline-block action-auth-form">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="go_model2">
-      <button class="proceed-btn action-auth">Proceed to Defect Detection</button>
-    </form>
-    {% endif %}
-
-    <form method="POST" class="d-inline-block ms-3">
-      {% csrf_token %}
-      <input type="hidden" name="action" value="reset_all">
-      <button class="btn btn-secondary px-4">Predict Again</button>
-    </form>
-  </div>
-
-</div>
-{% endif %}
-  
-
-  <!-- ================= MODEL-2 FORM (only shown after user hits PROCEED) ================= -->
+  <!-- ================= MODEL-2 FORM ================= -->
   {% if show_model2_form and not model2_result %}
-  <div class="data-input-card mb-5" id="model2Section">
+  <div id="model2Section" class="data-input-card mb-5">
+
     <div class="row">
       <div class="col-md-5 p-4 border-end">
         <h3 class="model-left-title">Defect Detection</h3>
-        <div class="model-image-wrapper">
-          <img src="{% static 'quali_defect_app/images/model2_left.png' %}" class="model-left-image">
-        </div>
+        <img src="{% static 'quali_defect_app/images/model2_left.png' %}" class="model-left-image">
       </div>
 
       <div class="col-md-7 p-4">
-        <form method="POST" class="action-auth-form">
+        <form method="POST" class="auth-form">
           {% csrf_token %}
           <input type="hidden" name="action" value="predict_model2">
 
-          <h4 class="fw-bold mb-3">Enter Further details</h4>
+          <h4 class="fw-bold mb-3">Enter Further Details</h4>
+
           <div class="row g-4">
+
             <div class="col-md-6">
               <label class="form-label">Tool Condition</label>
               <select name="Tool_Condition" class="form-select form-select-lg">
@@ -279,65 +283,34 @@
               </select>
             </div>
 
-            {% for field in model2_features %}
-            {% if field != "Tool_Condition" %}
-            <div class="col-md-6">
-              <div class="label-wrapper">
+            {% for field in model2_user_fields %}
+              {% if field != "Tool_Condition" %}
+              <div class="col-md-6">
                 <label class="form-label">{{ field }}</label>
-                <span class="tooltip-icon">i</span>
-                <div class="tooltip-box">
-                  <div class="tooltip-title">Suggestion</div>
-                  {% if field == "Melt_Temperature" %}
-                    <div class="tooltip-line">Unit: °C</div>
-                    <div class="tooltip-line">Range: 450–750</div>
-                  {% elif field == "Mold_Temperature" %}
-                    <div class="tooltip-line">Unit: °C</div>
-                    <div class="tooltip-line">Range: 150–300</div>
-                  {% elif field == "Casting_Pressure" %}
-                    <div class="tooltip-line">Unit: bar</div>
-                    <div class="tooltip-line">Range: 50–250</div>
-                  {% elif field == "Cooling_Time" %}
-                    <div class="tooltip-line">Unit: sec</div>
-                    <div class="tooltip-line">Range: 20–120</div>
-                  {% elif field == "Flow_Rate" %}
-                    <div class="tooltip-line">Unit: cm³/s</div>
-                    <div class="tooltip-line">Range: 5–50</div>
-                  {% elif field == "Ambient_Humidity" %}
-                    <div class="tooltip-line">Unit: %RH</div>
-                    <div class="tooltip-line">Range: 20–60</div>
-                  {% elif field == "Operator_Experience" %}
-                    <div class="tooltip-line">Unit: years</div>
-                    <div class="tooltip-line">Range: 0–20</div>
-                  {% else %}
-                    <div class="tooltip-line">Unit: </div>
-                    <div class="tooltip-line">Range: </div>
-                  {% endif %}
-                </div>
+                <input type="number" step="any" name="{{ field }}"
+                       value="{{ default_model2|get_item:field }}"
+                       class="form-control form-control-lg" required>
               </div>
-
-              <input
-                type="number"
-                step="any"
-                name="{{ field }}"
-                class="form-control form-control-lg"
-                value="{{ default_model2|get_item:field }}">
-            </div>
-            {% endif %}
+              {% endif %}
             {% endfor %}
+
           </div>
 
           <div class="text-center mt-4">
-            <button class="analyze-btn px-5 action-auth">Detect Defect</button>
+            <button class="analyze-btn px-5 auth-check">Detect Defect</button>
           </div>
+
         </form>
       </div>
     </div>
+
   </div>
   {% endif %}
 
-  <!-- ================= MODEL-2 RESULT (shows when model2_result exists) ================= -->
+  <!-- ================= MODEL-2 RESULT ================= -->
   {% if model2_result %}
-  <div class="data-input-card mb-5" id="model2ResultCard">
+  <div class="data-input-card mb-5">
+
     <h4 class="fw-bold mt-4 mb-3">Defect Detection Input Summary</h4>
 
     <div class="table-responsive">
@@ -345,14 +318,14 @@
         <thead class="table-primary">
           <tr>
             {% for col in model2_columns_readable %}
-            <th>{{ col }}</th>
+              <th>{{ col }}</th>
             {% endfor %}
           </tr>
         </thead>
         <tbody>
           <tr>
             {% for v in model2_values %}
-            <td>{{ v }}</td>
+              <td>{{ v }}</td>
             {% endfor %}
           </tr>
         </tbody>
@@ -365,298 +338,182 @@
     </div>
 
     <h5 class="fw-bold mt-3">Class Probabilities</h5>
+
     <div class="model2-chart-row">
 
-    <!-- PIE CHART -->
-    <div class="model2-chart-col">
+      <div class="model2-chart-col">
         <h6 class="model2-chart-title">Probability Distribution (Pie)</h6>
         <canvas id="model2Pie" class="chart-medium"></canvas>
-    </div>
+      </div>
 
-    <!-- BAR CHART -->
-    <div class="model2-chart-col">
+      <div class="model2-chart-col">
         <h6 class="model2-chart-title">Class Comparison (Bar)</h6>
         <canvas id="model2Bar" class="chart-medium"></canvas>
+      </div>
+
     </div>
 
-</div>
+    {% if model2_recommendations %}
+    <div class="recommendation-card mt-4 p-3 bg-light border rounded">
+      <h5 class="fw-bold mb-2">Recommended Adjustments</h5>
+
+      <ul class="list-group">
+        {% for rec in model2_recommendations %}
+          <li class="list-group-item">{{ rec }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
 
     <div class="text-center mt-4">
-      <form method="POST">
+      <form method="POST" class="auth-form">
         {% csrf_token %}
         <input type="hidden" name="action" value="reset_all">
-        <button class="btn btn-secondary px-4">Predict Again</button>
+        <button class="btn btn-secondary px-4 auth-check">Predict Again</button>
       </form>
     </div>
+
   </div>
   {% endif %}
 
-</div>
+</div> <!-- END container -->
 
 <!-- ================= VIDEO MODAL ================= -->
 <div class="modal fade" id="demoVideoModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content demo-video-modal">
 
-      <!-- Close Button -->
       <button type="button" class="demo-video-close" data-bs-dismiss="modal">✕</button>
 
-      <!-- Video Container -->
       <div class="demo-video-wrapper">
-        <video id="demoVideoPlayer" class="demo-video" muted playsinline controls>
+        <video id="demoVideoPlayer"
+               class="demo-video"
+               muted playsinline controls>
           <source src="{% static 'quali_defect_app/video/sample_video.mp4' %}" type="video/mp4">
         </video>
-      </div>  
+      </div>
 
     </div>
   </div>
 </div>
 
 
-
-{% endblock %}
-
-{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-    /* ===============================================================
-       AUTH + INTRO BEHAVIOR
-    =============================================================== */
-    const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
-    const loginModalEl = document.getElementById('loginPopup');
-    const loginModal = new bootstrap.Modal(loginModalEl);
+  // ================= BACKEND FLAG FOR PAYMENT =================
+  const paymentRequired = {{ payment_required|yesno:"true,false" }};
+  const paymentModalEl = document.getElementById("paymentPopup");
+  const paymentModal = paymentModalEl ? new bootstrap.Modal(paymentModalEl) : null;
 
-    const INTRO_KEY = "qs_intro_started_v1";
-    const introSection = document.getElementById("introSection");
-    const model1Section = document.getElementById("model1Section");
+  // ================= LOGIN DETECTION =================
+  const isAuth = {{ request.session.firebase_uid|yesno:"true,false" }};
+  const loginModalEl = document.getElementById("loginPopup");
+  const loginModal = loginModalEl ? new bootstrap.Modal(loginModalEl) : null;
 
-    if (localStorage.getItem(INTRO_KEY) === "yes") {
-        introSection.style.display = "none";
-        if (model1Section) model1Section.style.display = "";
-    } else {
-        introSection.style.display = "block";
-        if (model1Section) model1Section.style.display = "none";
-    }
+  // ======================= PAYMENT BLOCKER =======================
+  function blockIfPaymentNeeded(e) {
+      if (paymentRequired) {
+          e.preventDefault();
+          if (paymentModal) paymentModal.show();
+          return true;
+      }
+      return false;
+  }
 
-    const startBtn = document.getElementById("startModelBtn");
-    if (startBtn) {
-        startBtn.addEventListener("click", () => {
-            if (!isAuth) {
-                loginModal.show();
-                return;
-            }
-            localStorage.setItem(INTRO_KEY, "yes");
-            introSection.style.display = "none";
-            if (model1Section) model1Section.style.display = "";
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        });
-    }
+  // ================= BUTTON PROTECTION =================
+  document.querySelectorAll(".auth-check").forEach(btn => {
+      btn.addEventListener("click", e => {
 
-    document.querySelectorAll(".action-auth").forEach(btn => {
-        btn.addEventListener("click", e => {
-            if (!isAuth) {
-                e.preventDefault();
-                loginModal.show();
-            }
-        });
+          if (!isAuth) {
+              e.preventDefault();
+              if (loginModal) loginModal.show();
+              return;
+          }
+
+          blockIfPaymentNeeded(e);
+      });
+  });
+
+  // ================= FORM PROTECTION =================
+  document.querySelectorAll("form.auth-form").forEach(form => {
+      form.addEventListener("submit", e => {
+
+          if (!isAuth) {
+              e.preventDefault();
+              if (loginModal) loginModal.show();
+              return;
+          }
+
+          blockIfPaymentNeeded(e);
+      });
+  });
+
+  // ================= INTRO LOGIC =================
+  const INTRO_KEY = "qs_intro_started_v1";
+  const introSection = document.getElementById("introSection");
+  const model1Section = document.getElementById("model1Section");
+
+  if (localStorage.getItem(INTRO_KEY) === "yes") {
+    if (introSection) introSection.style.display = "none";
+    if (model1Section) model1Section.style.display = "";
+  } else {
+    if (introSection) introSection.style.display = "";
+    if (model1Section) model1Section.style.display = "none";
+  }
+
+  const startBtn = document.getElementById("startModelBtn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      if (!isAuth) {
+        if (loginModal) loginModal.show();
+        return;
+      }
+
+      if (paymentRequired) {
+        if (paymentModal) paymentModal.show();
+        return;
+      }
+
+      localStorage.setItem(INTRO_KEY, "yes");
+      if (introSection) introSection.style.display = "none";
+      if (model1Section) model1Section.style.display = "";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
+  }
 
-    document.querySelectorAll(".action-auth-form").forEach(form => {
-        form.addEventListener("submit", e => {
-            if (!isAuth) {
-                e.preventDefault();
-                loginModal.show();
-            }
-        });
-    });
+  // ================= MODEL-2 CHART RENDERING =================
+  {% if model2_result %}
+  try {
+    const labels2 = [{% for p in model2_result.Probabilities %}"{{ p.label }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+    const data2 = [{% for p in model2_result.Probabilities %}{{ p.prob }}{% if not forloop.last %}, {% endif %}{% endfor %}];
 
-    document.querySelectorAll(".label-wrapper").forEach(wrapper => {
-        const icon = wrapper.querySelector(".tooltip-icon");
-        const box = wrapper.querySelector(".tooltip-box");
-        if (!icon || !box) return;
-        wrapper.addEventListener("mouseenter", () => box.classList.add("visible"));
-        wrapper.addEventListener("mouseleave", () => box.classList.remove("visible"));
-    });
-
-
-    /* ===============================================================
-       MODEL-1 GAUGE (ApexCharts)
-    =============================================================== */
-    const gaugeValue = parseFloat({{ model1_result.Confidence|default:"0" }}) || 0;
-    const predictedClass = "{{ model1_result.Predicted_Class|default:'PASS' }}";
-    const gaugeEl = document.querySelector("#model1Gauge");
-
-    if (gaugeEl) {
-        const classColor = predictedClass === "PASS" ? "#28a745" : "#dc3545";
-        const midColor = "#ffba08";
-
-        var gaugeOptions = {
-            series: [gaugeValue],
-            chart: {
-                height: 300,
-                type: 'radialBar',
-                animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 1500
-                }
-            },
-            plotOptions: {
-                radialBar: {
-                    startAngle: -135,
-                    endAngle: 135,
-                    hollow: { size: "60%" },
-                    track: { background: "#f2f2f2" },
-                    dataLabels: {
-                        name: {
-                            show: true,
-                            offsetY: 40,
-                            formatter: () => predictedClass,
-                            color: classColor,
-                            fontSize: "20px",
-                            fontWeight: "700"
-                        },
-                        value: {
-                            show: true,
-                            offsetY: -20,
-                            formatter: val => Math.round(val) + "%",
-                            fontSize: "28px",
-                            fontWeight: "700"
-                        }
-                    }
-                }
-            },
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    colorStops: [
-                        { offset: 0, color: '#e63946', opacity: 1 },
-                        { offset: 50, color: midColor, opacity: 1 },
-                        { offset: 100, color: '#28a745', opacity: 1 }
-                    ]
-                }
-            }
-        };
-
-        new ApexCharts(gaugeEl, gaugeOptions).render();
-    }
-
-
-    /* ===============================================================
-       MODEL-2 CHARTS (Chart.js)
-    =============================================================== */
-    const labels2 = [{% for p in model2_result.Probabilities %}"{{ p.label }}",{% endfor %}];
-    const data2 = [{% for p in model2_result.Probabilities %}{{ p.prob }},{% endfor %}];
-
-    /* -------- PIE ANIMATED -------- */
     const pieEl = document.getElementById("model2Pie");
-    if (pieEl) {
-        new Chart(pieEl, {
-            type: 'pie',
-            data: {
-                labels: labels2,
-                datasets: [{
-                    data: data2,
-                    backgroundColor: [
-                        "#4e79a7", "#f28e2b", "#e15759",
-                        "#76b7b2", "#59a14f", "#edc948",
-                        "#b07aa1", "#ff9da7"
-                    ],
-                    borderWidth: 2,
-                    borderColor: "#ffffff"
-                }]
-            },
-            options: {
-                animation: {
-                    duration: 1800,
-                    easing: "easeInOutQuart"
-                },
-                animations: {
-                    x: {
-                        duration: 1000,
-                        easing: "easeOutExpo",
-                        delay: ctx => ctx.index * 150
-                    }
-                },
-                plugins: {
-                    legend: { position: "bottom" }
-                }
-            }
-        });
-    }
-
-    /* -------- BAR ANIMATED -------- */
     const barEl = document.getElementById("model2Bar");
-    if (barEl) {
-        new Chart(barEl, {
-            type: 'bar',
-            data: {
-                labels: labels2,
-                datasets: [{
-                    label: 'Probability (%)',
-                    data: data2,
-                    backgroundColor: "#4e79a7",
-                    borderRadius: 6,
-                    maxBarThickness: 38
-                }]
-            },
-            options: {
-                animation: {
-                    duration: 1500,
-                    easing: "easeOutElastic"
-                },
-                animations: {
-                    y: {
-                        from: 0,
-                        duration: 1400,
-                        easing: "easeOutElastic"
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 10 }
-                    }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
+
+    if (pieEl) {
+      new Chart(pieEl, {
+        type: 'doughnut',
+        data: { labels: labels2, datasets: [{ data: data2 }] },
+        options: { responsive: true }
+      });
     }
 
-});
+    if (barEl) {
+      new Chart(barEl, {
+        type: 'bar',
+        data: { labels: labels2, datasets: [{ data: data2 }] },
+        options: { responsive: true }
+      });
+    }
+  } catch (err) {}
+  {% endif %}
 
-
-/* ===============================================================
-   NEW DEMO VIDEO POPUP — Auto play + Auto pause
-=============================================================== */
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const videoModal = document.getElementById("demoVideoModal");
-    const videoPlayer = document.getElementById("demoVideoPlayer");
-
-    // Play automatically when modal opens
-    videoModal.addEventListener("shown.bs.modal", function () {
-        videoPlayer.currentTime = 0;
-        videoPlayer.play();
-    });
-
-    // Pause when modal closes
-    videoModal.addEventListener("hidden.bs.modal", function () {
-        videoPlayer.pause();
-    });
-});
-
-
-
+}); // DOMContentLoaded
 </script>
-{% endblock %}
 
+{% endblock %}
 
 {% block footer %}{% endblock %}

@@ -18,12 +18,8 @@
             <p class="text-center text-muted mb-4">Please login or create an account to explore our AI models.</p>
 
             <div class="d-flex justify-content-around mb-3">
-                <a href="{% url 'login' %}?next={% url 'data_input' %}" 
-   class="btn btn-primary px-4">Login</a>
-
-<a href="{% url 'signup' %}?next={% url 'data_input' %}" 
-   class="btn btn-outline-primary px-4">Sign Up</a>
-
+                <a href="{% url 'login' %}?next={% url 'data_input' %}" class="btn btn-primary px-4">Login</a>
+                <a href="{% url 'signup' %}?next={% url 'data_input' %}" class="btn btn-outline-primary px-4">Sign Up</a>
             </div>
 
         </div>
@@ -49,7 +45,6 @@
                 <h1 class="gradient-heading">Transform Your Factory With Intelligent Quality AI</h1>
                 <p class="lead">Predict failures before they happen, reduce waste, and maintain stable production 24/7.</p>
 
-                <!-- UPDATED BUTTON -->
                 <button class="btn btn-primary btn-lg explore-btn">Explore Model →</button>
             </div>
         </div>
@@ -60,7 +55,6 @@
             <div class="carousel-caption">
                 <h1 class="gradient-heading">AI-Powered Defect Detection for Zero-Defect Manufacturing</h1>
                 <p class="lead">Identify cracks, porosity, weld defects, and casting flaws instantly with AI precision.</p>
-
                 <button class="btn btn-primary btn-lg explore-btn">Explore Model →</button>
             </div>
         </div>
@@ -71,7 +65,6 @@
             <div class="carousel-caption">
                 <h1 class="gradient-heading">Smart Analytics for Smarter Production Decisions</h1>
                 <p class="lead">Analyze batch behavior, operator efficiency, tool wear, and quality trends in one dashboard.</p>
-
                 <button class="btn btn-primary btn-lg explore-btn">Explore Model →</button>
             </div>
         </div>
@@ -237,22 +230,22 @@
 
 {% endblock %}
 
-
 {% block extra_js %}
 <script>
-    // Login-check for ALL Explore buttons
-    document.querySelectorAll(".explore-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
+// Login-check for ALL Explore buttons
+document.querySelectorAll(".explore-btn").forEach(btn => {
+    btn.addEventListener("click", function () {
 
-            const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
+        // UPDATED FOR FIREBASE SESSION
+        const isAuth = {{ request.session.firebase_uid|yesno:"true,false" }};
 
-            if (isAuth) {
-                window.location.href = "{% url 'data_input' %}";
-            } else {
-                var popup = new bootstrap.Modal(document.getElementById('loginPopup'));
-                popup.show();
-            }
-        });
+        if (isAuth) {
+            window.location.href = "{% url 'data_input' %}";
+        } else {
+            var popup = new bootstrap.Modal(document.getElementById('loginPopup'));
+            popup.show();
+        }
     });
+});
 </script>
 {% endblock %}

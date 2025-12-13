@@ -7,11 +7,10 @@
 
 {% block content %}
 
-<!-- ================= LOGIN POPUP (SHARED ACROSS SITE) ================= -->
+<!-- ================= LOGIN POPUP ================= -->
 <div class="modal fade" id="loginPopup" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-4">
-
             <h4 class="text-center fw-bold mb-2">Login Required</h4>
             <p class="text-center text-muted mb-4">Please login or sign up to send us a message.</p>
 
@@ -19,7 +18,6 @@
                 <a href="{% url 'login' %}" class="btn btn-primary px-4">Login</a>
                 <a href="{% url 'signup' %}" class="btn btn-outline-primary px-4">Sign Up</a>
             </div>
-
         </div>
     </div>
 </div>
@@ -41,8 +39,7 @@
         <div class="qs-contact-card qs-form-card" data-aos="fade-right">
           <h3 class="mb-4 text-primary fw-bold">Send Us a Message</h3>
 
-          <form id='contactForm' method="POST" action="{% if user.is_authenticated %}{% url 'contact' %}{% else %}{% url 'login' %}?next={% url 'contact' %}{% endif %}">
-
+          <form id='contactForm' method="POST" action="{% url 'contact' %}">
             {% csrf_token %}
 
             <div class="mb-3">
@@ -115,12 +112,14 @@
 <script>AOS.init();</script>
 
 <script>
-// LOGIN CHECK BEFORE CONTACT FORM SUBMISSION
-document.getElementById("contactForm").addEventListener("submit", function (event) {
-    const isAuth = {{ request.user.is_authenticated|yesno:"true,false" }};
+// --------------------------------------------------
+// Replace Django auth check with Firebase session check
+// --------------------------------------------------
+const isAuth = {{ request.session.firebase_uid|yesno:"true,false" }};
 
+document.getElementById("contactForm").addEventListener("submit", function (event) {
     if (!isAuth) {
-        event.preventDefault();  // stop form from submitting
+        event.preventDefault();
         const popup = new bootstrap.Modal(document.getElementById('loginPopup'));
         popup.show();
     }

@@ -1,0 +1,81 @@
+{
+    "machine_bounds": {
+        "Machine_Level": {
+            "min": 1.0,
+            "max": 3.0
+        },
+        "Air_Temperature(Kelvin)": {
+            "min": 292.3266889,
+            "max": 308.4980155
+        },
+        "Process_Temperature(Kelvin)": {
+            "min": 302.2872493,
+            "max": 320.33648
+        },
+        "Rotational_Speed(rpm)": {
+            "min": 889.0,
+            "max": 2089.0
+        },
+        "Torque(Nm)": {
+            "min": 5.519570858,
+            "max": 90.84853797
+        },
+        "Tool_Wear(min)": {
+            "min": 0.0,
+            "max": 250.0
+        },
+        "Temp_Difference": {
+            "min": -0.336198375,
+            "max": 20.18388772
+        },
+        "Speed_Torque_Ratio": {
+            "min": 11.6937311,
+            "max": 288.2470469
+        },
+        "Wear_Rate": {
+            "min": 0.0,
+            "max": 252.016129
+        },
+        "Energy_Index": {
+            "min": 8781.637234,
+            "max": 127284.0655
+        },
+        "Thermal_Stress_Index": {
+            "min": -15.94225713,
+            "max": 1516.757961
+        },
+        "Torque_Wear_Product": {
+            "min": 0.0,
+            "max": 20525.81975
+        },
+        "Speed_Temp_Interaction": {
+            "min": 280.4524347,
+            "max": 644.2653353
+        },
+        "Maintenance_Indicator": {
+            "min": 0.0,
+            "max": 1.0
+        },
+        "Normalized_Wear_Rate": {
+            "min": 0.0,
+            "max": 3.437139984
+        }
+    },
+    "machine_feature_order": [
+        "Machine_Level",
+        "Air_Temperature(Kelvin)",
+        "Process_Temperature(Kelvin)",
+        "Rotational_Speed(rpm)",
+        "Torque(Nm)",
+        "Tool_Wear(min)",
+        "Temp_Difference",
+        "Speed_Torque_Ratio",
+        "Wear_Rate",
+        "Energy_Index",
+        "Thermal_Stress_Index",
+        "Torque_Wear_Product",
+        "Speed_Temp_Interaction",
+        "Maintenance_Indicator",
+        "Normalized_Wear_Rate"
+    ]
+}

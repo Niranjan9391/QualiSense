@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QualiSense Admin Dashboard</title>
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Poppins", sans-serif;
+            background: #f4f6fb;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #1e2a47;
+            padding-top: 25px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 22px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 14px 25px;
+            color: #c7d4ea;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #263a6b;
+            color: #fff;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            margin-top: auto;
+            padding: 14px 25px;
+            color: #ffb3b3;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .logout-btn:hover {
+            background: #732626;
+            color: white;
+        }
+
+        /* Main section */
+        .main {
+            margin-left: 260px;
+            padding: 25px;
+            width: calc(100% - 260px);
+        }
+
+        .admin-header {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .admin-profile {
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-link {
+    position: absolute;
+    bottom: 30px;     /* move it higher so it's visible comfortably */
+    left: 0;
+    width: 80%;
+    text-decoration: none;
+    color: #d7e1ef;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+.logout-link:hover {
+    background: #263a6b;
+    color: #fff;
+}
+
+
+        /* Responsive for mobile */
+        @media (max-width: 720px) {
+            .sidebar {
+                width: 200px;
+            }
+            .main {
+                margin-left: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>QualiSense</h2>
+
+        <a href="{% url 'admin_dashboard' %}" class="{% if active_page == 'dashboard' %}active{% endif %}">
+            <i class="fa-solid fa-chart-line"></i> Dashboard
+        </a>
+
+        <a href="{% url 'admin_users' %}" class="{% if active_page == 'users' %}active{% endif %}">
+            <i class="fa-solid fa-users"></i> Users
+        </a>
+
+        <a href="{% url 'admin_logs' %}" class="{% if active_page == 'logs' %}active{% endif %}">
+            <i class="fa-solid fa-clock-rotate-left"></i> Logs
+        </a>
+
+        <a href="{% url 'admin_settings' %}" class="{% if active_page == 'settings' %}active{% endif %}">
+            <i class="fa-solid fa-gear"></i> Settings
+        </a>
+
+        <!-- Logout -->
+        <a href="{% url 'logout' %}" class="logout-link">
+    <i class="fa-solid fa-right-from-bracket"></i> Logout
+</a>
+    </div>
+
+    <!-- Main content -->
+    <div class="main">
+
+        <div class="admin-header">
+            <h1>{% block page_title %}Admin Dashboard{% endblock %}</h1>
+
+            <div class="admin-profile">
+                <i class="fa-solid fa-user-shield"></i> Admin
+            </div>
+        </div>
+
+        <br>
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+</body>
+</html>

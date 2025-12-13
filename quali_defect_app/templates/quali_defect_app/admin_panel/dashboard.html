@@ -1,0 +1,218 @@
+{% extends "quali_defect_app/admin_panel/base_admin.html" %}
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+.analytics-wrapper { padding: 20px; }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.stat-card h3 { font-size: 16px; color: #666; margin-bottom: 8px; }
+.stat-card .value { font-size: 30px; font-weight: 600; color: #1e2a47; }
+
+.stat-icon {
+    font-size: 28px;
+    color: #263a6b;
+    float: right;
+}
+
+.section-title {
+    font-size: 20px;
+    margin: 15px 0;
+    font-weight: 600;
+    color: #1e2a47;
+}
+
+.section-box {
+    background: white;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+}
+
+.chart-container { width: 100%; height: 350px; }
+</style>
+
+<div class="analytics-wrapper">
+
+    <!-- TOP STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <div class="value">{{ total_users }}</div>
+            <i class="fa-solid fa-users stat-icon"></i>
+        </div>
+
+        <div class="stat-card">
+            <h3>Active Users</h3>
+            <div class="value">{{ active_users }}</div>
+            <i class="fa-solid fa-user-check stat-icon"></i>
+        </div>
+
+        <div class="stat-card">
+            <h3>Blocked Users</h3>
+            <div class="value">{{ blocked_users }}</div>
+            <i class="fa-solid fa-user-slash stat-icon"></i>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total Predictions</h3>
+            <div class="value">{{ total_predictions }}</div>
+            <i class="fa-solid fa-chart-line stat-icon"></i>
+        </div>
+    </div>
+
+    <!-- USER ANALYTICS -->
+    <h2 class="section-title">User Analytics</h2>
+
+    <div class="section-box">
+        <h3>Average Predictions Per User — Last 7 Days</h3>
+        <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <div class="section-box">
+        <h3>Top Users by Prediction Count</h3>
+        <div class="chart-container">
+            <canvas id="topUsersChart"></canvas>
+        </div>
+    </div>
+
+    <!-- PREDICTION ANALYTICS -->
+    <h2 class="section-title">Prediction Analytics</h2>
+
+    <div class="section-box">
+        <h3>Prediction Results (PASS vs FAIL)</h3>
+        <div class="chart-container">
+            <canvas id="passFailChart"></canvas>
+        </div>
+    </div>
+
+    <div class="section-box">
+        <h3>Model Wise Prediction Count</h3>
+        <div class="chart-container">
+            <canvas id="modelCountChart"></canvas>
+        </div>
+    </div>
+</div>
+<div class="section-box">
+    <h3>Model-2 Class Distribution</h3>
+    <div class="chart-container">
+        <canvas id="model2ClassChart"></canvas>
+    </div>
+</div>
+
+<!-- ===================== CHART JS ===================== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// -------------------- TREND CHART --------------------
+const trendChartCtx = document.getElementById('trendChart');
+
+new Chart(trendChartCtx, {
+    type: 'line',
+    data: {
+        labels: {{ trend_labels|safe }},
+        datasets: [{
+            label: 'Avg Predictions Per User',
+            data: {{ trend_values|safe }},
+            fill: false,
+            borderColor: '#1e2a47',
+            tension: 0.4,
+            borderWidth: 3
+        }]
+    },
+    options: { 
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+// -------------------- TOP USERS CHART --------------------
+new Chart(document.getElementById('topUsersChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ top_user_labels|safe }},
+        datasets: [{
+            label: 'Predictions',
+            data: {{ top_user_counts|safe }},
+            backgroundColor: '#263a6b'
+        }]
+    },
+    options: { responsive: true }
+});
+
+
+// -------------------- PASS / FAIL PIE --------------------
+new Chart(document.getElementById('passFailChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['PASS', 'FAIL'],
+        datasets: [{
+            data: [{{ pass_count }}, {{ fail_count }}],
+            backgroundColor: ['#1e2a47', '#ff4d4d']
+        }]
+    },
+    options: { responsive: true }
+});
+
+
+// -------------------- MODEL COUNT --------------------
+new Chart(document.getElementById('modelCountChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Model 1', 'Model 2'],
+        datasets: [{
+            label: 'Predictions',
+            data: [{{ model1_count }}, {{ model2_count }}],
+            backgroundColor: ['#4CAF50', '#1e90ff']
+        }]
+    },
+    options: { responsive: true }
+});
+
+// -------------------- MODEL-2 CLASS DISTRIBUTION --------------------
+const model2ClassCtx = document.getElementById('model2ClassChart');
+
+new Chart(model2ClassCtx, {
+    type: 'pie',
+    data: {
+        labels: {{ model2_class_labels|safe }},
+        datasets: [{
+            data: {{ model2_class_values|safe }},
+            backgroundColor: [
+                '#1e2a47', '#4CAF50', '#ff9800',
+                '#ff4d4d', '#0099cc', '#9966ff'
+            ]
+        }]
+    },
+    options: { responsive: true }
+});
+
+</script>
+
+
+{% endblock %}

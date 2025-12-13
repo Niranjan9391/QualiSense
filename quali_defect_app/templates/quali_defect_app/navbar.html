@@ -38,6 +38,11 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link nav-anim {% if request.resolver_match.url_name == 'pricing_page' %}active-link{% endif %}"
+                       href="{% url 'pricing_page' %}">Our Plans</a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link nav-anim {% if request.resolver_match.url_name == 'about' %}active-link{% endif %}"
                        href="{% url 'about' %}">About Us</a>
                 </li>
@@ -47,43 +52,81 @@
                        href="{% url 'contact' %}">Contact Us</a>
                 </li>
 
-                <!-- ============================
-                     PROFILE AVATAR + DROPDOWN
-                ============================ -->
-                {% if user.is_authenticated %}
-                <li class="nav-item profile-dropdown ms-3">
+                <!-- ==========================
+                     LOGGED-IN USER
+                ========================== -->
+                {% if request.session.firebase_uid %}
 
-                    <!-- Circular avatar -->
+                <!-- 🔢 Credits Badge (AJAX) -->
+                <li class="nav-item me-3">
+                    <span id="creditsBadge"
+                          class="badge bg-warning text-dark px-3 py-2"
+                          title="Predictions left">
+                        🔢 --
+                    </span>
+                </li>
+
+                <!-- Profile -->
+                <li class="nav-item profile-dropdown ms-2">
                     <a class="profile-avatar" href="#" id="profileMenu">
-                        {{ user.username|first|upper }}
+                        {{ request.session.firebase_uid|first|upper }}
                     </a>
 
-                    <!-- Custom dropdown -->
                     <ul class="dropdown-menu profile-menu">
                         <li>
                             <a class="dropdown-item" href="{% url 'history' %}">History</a>
                         </li>
-
                         <li><hr class="dropdown-divider"></li>
-
                         <li>
                             <a class="dropdown-item text-danger" href="{% url 'logout' %}">
                                 Logout
                             </a>
                         </li>
                     </ul>
-
                 </li>
 
                 {% else %}
+
+                <!-- NOT LOGGED-IN -->
                 <li class="nav-item">
                     <a class="btn btn-outline-light ms-3" href="{% url 'login' %}">Login</a>
                 </li>
                 <li class="nav-item">
                     <a class="btn btn-primary ms-2" href="{% url 'signup' %}">Sign Up</a>
                 </li>
+
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
+
+<!-- ==========================
+     AJAX: FETCH USER CREDITS
+========================== -->
+{% if request.session.firebase_uid %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("{% url 'user_credits_api' %}")
+        .then(res => res.json())
+        .then(data => {
+            const badge = document.getElementById("creditsBadge");
+            if (!badge) return;
+
+            if (data.credits === null) {
+                badge.style.display = "none";
+            } else {
+                badge.innerText = "🔢 " + data.credits + " left";
+
+                // Optional: low credit warning
+                if (data.credits <= 3) {
+                    badge.classList.remove("bg-warning");
+                    badge.classList.add("bg-danger", "text-white");
+                    badge.title = "Low credits! Please upgrade.";
+                }
+            }
+        })
+        .catch(err => console.warn("Credits fetch failed:", err));
+});
+</script>
+{% endif %}

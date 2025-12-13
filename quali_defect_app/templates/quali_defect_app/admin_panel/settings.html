@@ -1,0 +1,127 @@
+{% extends "quali_defect_app/admin_panel/base_admin.html" %}
+{% block page_title %}Admin Settings{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+.settings-container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    max-width: 600px;
+}
+
+.profile-box {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.profile-box img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+}
+
+.settings-section {
+    margin-bottom: 25px;
+}
+
+.settings-section h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.btn-save {
+    width: 100%;
+    background: #1e2a47;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-save:hover {
+    background: #263a6b;
+}
+
+.success-box {
+    padding: 12px;
+    color: #1f8b24;
+    background: #e9ffe9;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.error-box {
+    padding: 12px;
+    color: #cc0000;
+    background: #ffe5e5;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+</style>
+
+<div class="settings-container">
+
+    {% if success %}
+        <div class="success-box">{{ success }}</div>
+    {% endif %}
+
+    {% if error %}
+        <div class="error-box">{{ error }}</div>
+    {% endif %}
+
+    <!-- PROFILE DETAILS -->
+    <div class="settings-section">
+        <h3><i class="fa fa-user"></i> Profile Information</h3>
+
+        <div class="profile-box">
+            <img src="https://cdn-icons-png.flaticon.com/512/9131/9131529.png">
+            <div>
+                <strong>{{ admin_email }}</strong><br>
+                <small>Admin Account</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <div class="settings-section">
+        <h3><i class="fa fa-lock"></i> Change Password</h3>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password">
+
+            <input type="password" name="old_password"
+                   placeholder="Enter old password"
+                   class="input-field" required>
+
+            <input type="password" name="new_password"
+                   placeholder="Enter new password"
+                   class="input-field" required>
+
+            <input type="password" name="confirm_password"
+                   placeholder="Confirm new password"
+                   class="input-field" required>
+
+            <button class="btn-save">Update Password</button>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

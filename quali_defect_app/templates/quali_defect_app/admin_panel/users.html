@@ -1,0 +1,308 @@
+{% extends "quali_defect_app/admin_panel/base_admin.html" %}
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+/* PAGE WRAPPER */
+.user-wrapper {
+    background: #fff;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* TOP BAR */
+.users-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.search-box input {
+    width: 280px;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* ADD USER BUTTON */
+.add-user-btn {
+    background: #1e2a47;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+.add-user-btn:hover {
+    background: #263a6b;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th {
+    background: #f4f6fa;
+    padding: 12px;
+    text-align: left;
+    font-size: 14px;
+}
+td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+/* BADGES */
+.badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-user { background: #e0f2ff; color: #0077c8; }
+.badge-admin { background: #ffe6cc; color: #d47b00; }
+.badge-active { background: #e6ffe6; color: #1f8b24; }
+.badge-blocked { background: #ffdddd; color: #cc0000; }
+
+/* ACTION BUTTONS */
+.action-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #333;
+}
+.action-btn:hover { color: #1e2a47; }
+
+/* MODALS */
+.modal {
+    display: none;
+    position: fixed;
+    left: 0; top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    width: 420px;
+    padding: 22px;
+    border-radius: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal input, .modal select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+
+/* MODAL BUTTONS */
+.btn-save {
+    width: 100%;
+    background: #1e2a47;
+    border: none;
+    padding: 12px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.btn-save:hover {
+    background: #263a6b;
+}
+.btn-danger {
+    background: #ff4444;
+    border: none;
+    padding: 12px;
+    width: 100%;
+    color: white;
+    border-radius: 8px;
+}
+</style>
+
+<div class="user-wrapper">
+
+    <!-- TOP BAR -->
+    <div class="users-topbar">
+        <div class="search-box">
+            <input type="text" id="searchUser" placeholder="Search users...">
+        </div>
+
+        <button class="add-user-btn" onclick="openAddUserModal()">
+            <i class="fa fa-user-plus"></i> Add User
+        </button>
+    </div>
+
+    <!-- USERS TABLE -->
+    <table id="usersTable">
+        <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+
+        {% for u in users %}
+        <tr data-search="{{ u.email }} {{ u.uid }}">
+            <td>
+                <strong>{{ u.email }}</strong><br>
+                <small style="color:gray;">UID: {{ u.uid }}</small>
+            </td>
+
+            <td>
+                {% if u.role == "admin" %}
+                    <span class="badge badge-admin">Admin</span>
+                {% else %}
+                    <span class="badge badge-user">User</span>
+                {% endif %}
+            </td>
+
+            <td>
+                {% if u.status == "active" %}
+                    <span class="badge badge-active">Active</span>
+                {% else %}
+                    <span class="badge badge-blocked">Blocked</span>
+                {% endif %}
+            </td>
+
+            <td>
+                <button class="action-btn" onclick="editUser('{{ u.uid }}','{{ u.email }}','{{ u.role }}','{{ u.status }}')">
+                    <i class="fa fa-edit"></i>
+                </button>
+
+                <button class="action-btn" onclick="confirmDelete('{{ u.uid }}')">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+<!-- ADD USER MODAL -->
+<div class="modal" id="addUserModal">
+    <div class="modal-content">
+        <h3>Add New User</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create_user">
+
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+
+            <select name="role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <select name="status">
+                <option value="active">Active</option>
+                <option value="blocked">Blocked</option>
+            </select>
+
+            <button class="btn-save">Create User</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- EDIT USER MODAL -->
+<div class="modal" id="editUserModal">
+    <div class="modal-content">
+        <h3>Edit User</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="edit_user">
+            <input type="hidden" id="editUID" name="uid">
+
+            <label>Email (read-only)</label>
+            <input type="email" id="editEmail" name="email" readonly>
+
+            <label>Role</label>
+            <select id="editRole" name="role">
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <label>Status</label>
+            <select id="editStatus" name="status">
+                <option value="active">Active</option>
+                <option value="blocked">Blocked</option>
+            </select>
+
+            <button class="btn-save">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal" id="deleteUserModal">
+    <div class="modal-content">
+        <h3 style="color:#cc0000;"><i class="fa fa-warning"></i> Delete User?</h3>
+        <p>This action cannot be undone.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_user">
+            <input type="hidden" id="deleteUID" name="uid">
+
+            <button class="btn-danger">Delete User</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+// SEARCH FUNCTION
+document.getElementById("searchUser").addEventListener("keyup", function () {
+    let value = this.value.toLowerCase();
+    document.querySelectorAll("#usersTable tr[data-search]").forEach(row => {
+        row.style.display = row.dataset.search.toLowerCase().includes(value) ? "" : "none";
+    });
+});
+
+// OPEN MODALS
+function openAddUserModal() {
+    document.getElementById("addUserModal").style.display = "flex";
+}
+function editUser(uid, email, role, status) {
+    document.getElementById("editUserModal").style.display = "flex";
+    document.getElementById("editUID").value = uid;
+    document.getElementById("editEmail").value = email;
+    document.getElementById("editRole").value = role;
+    document.getElementById("editStatus").value = status;
+}
+function confirmDelete(uid) {
+    document.getElementById("deleteUserModal").style.display = "flex";
+    document.getElementById("deleteUID").value = uid;
+}
+
+// CLOSE MODALS WHEN CLICK OUTSIDE
+window.onclick = function(e) {
+    document.querySelectorAll(".modal").forEach(modal => {
+        if (e.target === modal) modal.style.display = "none";
+    });
+};
+</script>
+
+{% endblock %}

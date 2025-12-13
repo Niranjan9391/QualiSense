@@ -1,0 +1,216 @@
+{% extends "quali_defect_app/admin_panel/base_admin.html" %}
+{% block page_title %}Admin Logs{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+.logs-wrapper {
+    background: #fff;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* FILTER BAR */
+.logs-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.search-box input {
+    width: 280px;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.filter-select {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th {
+    background: #f4f6fa;
+    padding: 12px;
+    font-size: 14px;
+    text-align: left;
+}
+td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-create { background: #e0f7ff; color:#0077a3; }
+.badge-edit { background:#fff4d6; color:#b37b00; }
+.badge-delete { background:#ffdddd; color:#c40000; }
+
+/* ACTION BUTTON */
+.view-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #1e2a47;
+}
+.view-btn i { font-size: 18px; }
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    left: 0; top:0;
+    width: 100%; height:100%;
+    background: rgba(0,0,0,0.45);
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    width: 480px;
+    background: #fff;
+    padding: 22px;
+    border-radius: 12px;
+}
+.close-btn {
+    background:#1e2a47;
+    color:white;
+    padding:10px;
+    width:100%;
+    border:none;
+    border-radius:8px;
+    margin-top: 15px;
+}
+</style>
+
+<div class="logs-wrapper">
+
+    <!-- TOP BAR -->
+    <div class="logs-topbar">
+
+        <!-- SEARCH -->
+        <div class="search-box">
+            <input type="text" id="searchLogs" placeholder="Search logs...">
+        </div>
+
+        <!-- ACTION FILTER -->
+        <select id="actionFilter" class="filter-select">
+            <option value="all">All Actions</option>
+            <option value="CREATE_USER">Create User</option>
+            <option value="EDIT_USER">Edit User</option>
+            <option value="DELETE_USER">Delete User</option>
+        </select>
+
+    </div>
+
+    <!-- LOG TABLE -->
+    <table id="logsTable">
+        <tr>
+            <th>Action</th>
+            <th>Admin</th>
+            <th>Description</th>
+            <th>Time</th>
+            <th></th>
+        </tr>
+
+        {% for log in logs %}
+        <tr data-action="{{ log.action }}" data-search="{{ log.description }} {{ log.admin_email }}">
+            <td>
+                {% if log.action == "CREATE_USER" %}
+                    <span class="badge badge-create">Create</span>
+                {% elif log.action == "EDIT_USER" %}
+                    <span class="badge badge-edit">Edit</span>
+                {% elif log.action == "DELETE_USER" %}
+                    <span class="badge badge-delete">Delete</span>
+                {% endif %}
+            </td>
+
+            <td>{{ log.admin_email }}</td>
+
+            <td>{{ log.description|truncatechars:50 }}</td>
+
+            <td>
+                {% if log.timestamp %}
+                    {{ log.timestamp|date:"M d, Y H:i" }}
+                {% else %}
+                    --
+                {% endif %}
+            </td>
+
+            <td>
+                <button class="view-btn" onclick="viewLog(
+                    '{{ log.action }}',
+                    '{{ log.admin_email }}',
+                    `{{ log.description|escapejs }}`,
+                    '{{ log.timestamp }}'
+                )">
+                    <i class="fa fa-eye"></i>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<!-- LOG DETAILS MODAL -->
+<div class="modal" id="logModal">
+    <div class="modal-content">
+        <h3>Log Details</h3>
+
+        <p><strong>Action:</strong> <span id="mAction"></span></p>
+        <p><strong>Admin:</strong> <span id="mAdmin"></span></p>
+        <p><strong>Description:</strong><br><span id="mDesc"></span></p>
+        <p><strong>Timestamp:</strong> <span id="mTime"></span></p>
+
+        <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+<script>
+// SEARCH
+document.getElementById("searchLogs").addEventListener("keyup", function () {
+    let v = this.value.toLowerCase();
+    document.querySelectorAll("#logsTable tr[data-search]").forEach(r => {
+        r.style.display = r.dataset.search.toLowerCase().includes(v) ? "" : "none";
+    });
+});
+
+// FILTER
+document.getElementById("actionFilter").addEventListener("change", function () {
+    let filter = this.value;
+    document.querySelectorAll("#logsTable tr[data-action]").forEach(r => {
+        r.style.display = (filter === "all" || r.dataset.action === filter) ? "" : "none";
+    });
+});
+
+// VIEW LOG MODAL
+function viewLog(action, admin, desc, time) {
+    document.getElementById("mAction").innerText = action;
+    document.getElementById("mAdmin").innerText = admin;
+    document.getElementById("mDesc").innerText = desc;
+    document.getElementById("mTime").innerText = time || "--";
+    document.getElementById("logModal").style.display = "flex";
+}
+function closeModal() {
+    document.getElementById("logModal").style.display = "none";
+}
+window.onclick = function(e) {
+    if (e.target === document.getElementById("logModal"))
+        closeModal();
+};
+</script>
+
+{% endblock %}

@@ -8,66 +8,31 @@
 {% block content %}
 
 <div class="qs-auth-container">
-
     <div class="qs-auth-card">
 
         <h1 class="qs-auth-title">Create Account</h1>
         <p class="qs-auth-subtitle">Join QualiSense today</p>
 
-        {% if form.errors %}
-<div class="alert alert-danger p-2 text-center mb-3">
-    Please fix the errors below.
-</div>
+        <!-- ERROR BOX -->
+        <div id="errorBox" class="alert alert-danger p-2 text-center mb-3" style="display:none;"></div>
 
-<ul class="text-danger small">
-    {% for field in form %}
-        {% for error in field.errors %}
-            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-        {% endfor %}
-    {% endfor %}
-    
-    {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-
-        <form method="post" action="{% url 'signup' %}?next={{ request.GET.next }}">
-            {% csrf_token %}
-
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control"
-                       placeholder="Choose a username" required>
-            </div>
-
+        <!-- SIGNUP FORM -->
+        <form id="firebase-signup-form">
             <div class="mb-3">
                 <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control"
-                       placeholder="your@email.com" Required>
+                <input id="signup-email" type="email" class="form-control" placeholder="your@email.com" required>
             </div>
 
             <div class="mb-3 position-relative">
                 <label class="form-label">Password</label>
-                <input type="password" name="password1" class="form-control" id="signupPassword1"
-                       placeholder="Create password" required>
+                <input type="password" id="signup-password" class="form-control" placeholder="Create password" required>
 
-                <i class="bi bi-eye password-toggle" onclick="
-                    const p = document.getElementById('signupPassword1');
-                    p.type = p.type === 'password' ? 'text' : 'password';
-                "></i>
-            </div>
-
-            <div class="mb-3 position-relative">
-                <label class="form-label">Confirm Password</label>
-                <input type="password" name="password2" class="form-control" id="signupPassword2"
-                       placeholder="Confirm password" required>
-
-                <i class="bi bi-eye password-toggle" onclick="
-                    const p = document.getElementById('signupPassword2');
-                    p.type = p.type === 'password' ? 'text' : 'password';
-                "></i>
+                <i class="bi bi-eye password-toggle"
+                   onclick="
+                        const p = document.getElementById('signup-password');
+                        p.type = p.type === 'password' ? 'text' : 'password';
+                   ">
+                </i>
             </div>
 
             <button type="submit" class="btn btn-primary w-100 mt-2">
@@ -81,6 +46,79 @@
 
     </div>
 </div>
+
+
+<!-- ============================= -->
+<!-- 🔥 FIREBASE AUTH MODULES -->
+<!-- ============================= -->
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import {
+        getAuth,
+        createUserWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBPjTIFC8czCOm_q6wxSCRH3RkbXQ543gg",
+        authDomain: "qualisense-7ee06.firebaseapp.com",
+        projectId: "qualisense-7ee06",
+        storageBucket: "qualisense-7ee06.appspot.com",
+        messagingSenderId: "472417760202",
+        appId: "1:472417760202:web:e4bd73815ec632af2bd533"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    function showError(msg) {
+        const box = document.getElementById("errorBox");
+        box.style.display = "block";
+        box.innerText = msg;
+    }
+
+    // ⭐ Send UID & ID Token → Django session_login()
+    function sendUIDtoDjango(uid, token) {
+        fetch("/session-login/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: JSON.stringify({ uid: uid, token: token })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "ok") {
+                window.location.href = "/";
+            } else {
+                showError("Server session failed.");
+            }
+        })
+        .catch(() => showError("Server error."));
+    }
+
+
+    document.getElementById("firebase-signup-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const email = document.getElementById("signup-email").value;
+        const password = document.getElementById("signup-password").value;
+
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (result) => {
+
+                const uid = result.user.uid;
+
+                // ⭐ Get Firebase ID Token (IMPORTANT)
+                const token = await result.user.getIdToken();
+
+                sendUIDtoDjango(uid, token);
+            })
+            .catch(error => showError(error.message));
+    });
+
+</script>
 
 {% endblock %}
 {% block footer %}{% endblock %}

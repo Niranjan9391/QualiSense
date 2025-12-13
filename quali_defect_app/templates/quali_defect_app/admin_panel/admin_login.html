@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login - QualiSense</title>
+
+    <script type="module">
+        // --------------------------------------------
+        // Firebase v10 imports
+        // --------------------------------------------
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // --------------------------------------------
+        // Firebase Config (from context processor)
+        // --------------------------------------------
+        const firebaseConfig = {
+            apiKey: "{{ FIREBASE_API_KEY }}",
+            authDomain: "{{ FIREBASE_AUTH_DOMAIN }}",
+            projectId: "{{ FIREBASE_PROJECT_ID }}"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --------------------------------------------
+        // Admin Login Function
+        // --------------------------------------------
+        window.adminLogin = function () {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(async (userCredential) => {
+                    const token = await userCredential.user.getIdToken();
+
+                    // Send token to backend
+                    fetch("/qs-admin/verify/", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ token: token })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.allowed) {
+                            window.location.href = "/qs-admin/dashboard/";
+                        } else {
+                            alert("Access Denied — Not an Admin Role");
+                        }
+                    })
+                    .catch(err => alert("Server Error: " + err));
+                })
+                .catch(err => {
+                    alert("Login Failed: " + err.message);
+                });
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .box {
+            width: 340px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #1e2a47;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            color: white;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #263a6b;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <h2>Admin Login</h2>
+        <input id="email" type="email" placeholder="Admin Email" style="width:100%; padding:10px;">
+        <input id="password" type="password" placeholder="Password" style="width:100%; padding:10px; margin-top:10px;">
+        <button onclick="adminLogin()">Login</button>
+    </div>
+</body>
+</html>
